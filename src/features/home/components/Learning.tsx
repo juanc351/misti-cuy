@@ -1,57 +1,57 @@
 import Link from 'next/link';
 
-const products = [
+const learningTopics = [
   {
-    id: 'engorde',
-    title: 'Cuyes para Engorde',
+    id: 'alimentacion',
+    title: 'Alimentación',
     description:
-      'Ideales para producción de carne con excelente desarrollo.',
+      'Aprende a alimentar correctamente a tus cuyes en cada etapa.',
   },
   {
-    id: 'reproductores',
-    title: 'Reproductores',
+    id: 'manejo',
+    title: 'Manejo',
     description:
-      'Machos y hembras seleccionados para mejorar tu producción.',
+      'Conoce buenas prácticas para mejorar la salud y productividad.',
   },
   {
-    id: 'pie-de-cria',
-    title: 'Pie de Cría',
+    id: 'reproduccion',
+    title: 'Reproducción',
     description:
-      'Animales jóvenes con gran potencial para formar tu plantel.',
+      'Descubre recomendaciones para obtener mejores resultados reproductivos.',
   },
 ];
 
-export default function FeaturedProducts() {
+export default function Learning() {
   return (
     <section
-      aria-labelledby="featured-products-heading"
+      aria-labelledby="learning-heading"
       className="bg-white py-16 sm:py-20 lg:py-24"
     >
       <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8">
         {/* Cabecera de la sección */}
         <div className="mb-12 text-center">
           <h2
-            id="featured-products-heading"
+            id="learning-heading"
             className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
           >
-            Nuestros Productos
+            Aprende con Misti Cuy
           </h2>
           <p className="mt-4 text-base text-gray-600 sm:text-lg">
-            Conoce las principales categorías de cuyes que ofrecemos.
+            Descubre contenido educativo para mejorar tu crianza de cuyes.
           </p>
         </div>
 
-        {/* Grid de productos */}
+        {/* Grid de tarjetas */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
+          {learningTopics.map((topic) => (
             <article
-              key={product.id}
+              key={topic.id}
               className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 focus-within:ring-2 focus-within:ring-emerald-500"
             >
               {/* Placeholder de imagen */}
-              <div className="aspect-[4/3] w-full bg-gray-100 flex items-center justify-center">
+              <div className="aspect-[16/9] w-full bg-gray-100 flex items-center justify-center">
                 <span className="text-sm font-medium text-gray-400">
-                  Imagen {product.title}
+                  Imagen {topic.title}
                 </span>
               </div>
 
@@ -59,20 +59,20 @@ export default function FeaturedProducts() {
               <div className="flex flex-1 flex-col justify-between p-6">
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900">
-                    {product.title}
+                    {topic.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                    {product.description}
+                    {topic.description}
                   </p>
                 </div>
 
                 <div className="mt-6">
                   <Link
-                    href={`/catalogo#${product.id}`}
+                    href={`/aprende/${topic.id}`}
                     className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 active:scale-95"
-                    aria-label={`Ver más sobre ${product.title}`}
+                    aria-label={`Leer más sobre ${topic.title}`}
                   >
-                    Ver más
+                    Leer más
                   </Link>
                 </div>
               </div>
