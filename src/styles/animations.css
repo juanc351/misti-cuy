@@ -1,0 +1,61 @@
+/* ============================================================
+   Misti Cuy Design System
+   Shared Animations
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   Skeleton Shimmer
+------------------------------------------------------------ */
+
+@keyframes mc-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-mc-shimmer {
+  animation: mc-shimmer 2s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------
+   Spinner Dots
+------------------------------------------------------------ */
+
+@keyframes mc-spinner-dot-pulse {
+  0%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-mc-spinner-dot {
+  animation: mc-spinner-dot-pulse 1.4s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------
+   Progress Indeterminate
+------------------------------------------------------------ */
+
+@keyframes mc-progress-indeterminate {
+  0% {
+    left: -25%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+.animate-mc-progress-indeterminate {
+  animation: mc-progress-indeterminate 1.5s linear infinite;
+}

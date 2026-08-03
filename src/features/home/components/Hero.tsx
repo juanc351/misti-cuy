@@ -1,9 +1,8 @@
 import Link from "next/link";
-
-const WHATSAPP_NUMBER = "51999999999";
+import { SITE } from "@/config/site";
 
 export default function Hero() {
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20cuyes`;
+  const whatsappUrl = `https://wa.me/${SITE.contact.whatsapp}?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20cuyes`;
 
   return (
     <section
@@ -29,18 +28,19 @@ export default function Hero() {
 
             {/* Texto descriptivo */}
             <p className="max-w-lg text-base leading-relaxed text-gray-600 sm:text-lg">
-              En Misti Cuy ofrecemos reproductores y cuyes para engorde, criados
-              con alimentación de calidad y manejo tecnificado.
+              En {SITE.name} ofrecemos reproductores y cuyes para engorde,
+              criados con alimentación de calidad y manejo tecnificado.
             </p>
 
-            {/* Botones de acción */}
+            {/* Botones */}
             <div className="flex flex-wrap gap-4">
               <Link
-                href="/catalogo"
+                href="/catalog"
                 className="inline-flex items-center justify-center rounded-full bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:bg-gray-800 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 active:scale-95"
               >
                 Ver catálogo
               </Link>
+
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -63,6 +63,7 @@ export default function Hero() {
                 </span>
                 Alimentación de calidad
               </li>
+
               <li className="flex items-center gap-2">
                 <span
                   className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
@@ -72,6 +73,7 @@ export default function Hero() {
                 </span>
                 Disponibilidad permanente
               </li>
+
               <li className="flex items-center gap-2">
                 <span
                   className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
@@ -84,9 +86,9 @@ export default function Hero() {
             </ul>
           </div>
 
-          {/* Columna derecha: placeholder para imagen */}
+          {/* Columna derecha: Imagen */}
           <div className="hidden lg:flex lg:justify-center">
-            <div className="aspect-square w-full max-w-md rounded-3xl bg-gray-100 shadow-inner flex items-center justify-center transition-all duration-300 hover:shadow-md">
+            <div className="flex aspect-square w-full max-w-md items-center justify-center rounded-3xl bg-gray-100 shadow-inner transition-all duration-300 hover:shadow-md">
               <span className="text-center text-sm font-medium text-gray-400">
                 Imagen Principal
               </span>

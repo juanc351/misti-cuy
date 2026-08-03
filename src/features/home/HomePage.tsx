@@ -5,8 +5,6 @@ import Hero from "./components/Hero";
 import FeaturedProducts from "./components/FeaturedProducts";
 import WhyChooseUs from "./components/WhyChooseUs";
 import Availability from "./components/Availability";
-import Learning from "./components/Learning";
-import Videos from "./components/Videos";
 import CTA from "./components/CTA";
 
 export default function HomePage() {
@@ -19,8 +17,6 @@ export default function HomePage() {
         <FeaturedProducts />
         <WhyChooseUs />
         <Availability />
-        <Learning />
-        <Videos />
         <CTA />
       </main>
 
