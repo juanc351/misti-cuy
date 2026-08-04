@@ -18,6 +18,23 @@ const itemVariants = {
   },
 };
 
+const shellVariants = {
+  closed: {
+    width: 56,
+    height: 56,
+    borderRadius: 9999,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    boxShadow: "0 12px 40px rgba(0, 0, 0, 0.28)",
+  },
+  open: {
+    width: 320,
+    height: 260,
+    borderRadius: 28,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    boxShadow: "0 12px 40px rgba(0, 0, 0, 0.28)",
+  },
+};
+
 export default function AnimatedMenuButton() {
   const [open, setOpen] = useState(false);
 
@@ -27,33 +44,12 @@ export default function AnimatedMenuButton() {
 
   return (
     <>
-      <AnimatePresence>
-        {open ? (
-          <motion.div
-            className="fixed inset-0 z-[55] bg-black/10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              type: "spring",
-              stiffness: 320,
-              damping: 28,
-              mass: 0.8,
-            }}
-            onClick={() => setOpen(false)}
-          />
-        ) : null}
-      </AnimatePresence>
-
       <motion.div
-        layout
-        layoutId="mobile-menu-shell"
+        className="fixed inset-0 z-[55] bg-black/10"
         initial={false}
         animate={{
-          width: open ? 320 : 56,
-          height: open ? 260 : 56,
-          borderRadius: open ? 28 : 9999,
-          scale: open ? 1.02 : 1,
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
         }}
         transition={{
           type: "spring",
@@ -61,7 +57,20 @@ export default function AnimatedMenuButton() {
           damping: 28,
           mass: 0.8,
         }}
-        className="relative z-[60] overflow-hidden border border-white/10 bg-black/20 shadow-[0_12px_40px_rgba(0,0,0,0.28)] backdrop-blur-2xl"
+        onClick={() => setOpen(false)}
+      />
+
+      <motion.div
+        initial={false}
+        animate={open ? "open" : "closed"}
+        variants={shellVariants}
+        transition={{
+          type: "spring",
+          stiffness: 320,
+          damping: 28,
+          mass: 0.8,
+        }}
+        className="relative z-[60] overflow-hidden border border-white/10 backdrop-blur-2xl"
         style={{ maxWidth: "min(86vw, 320px)" }}
       >
         <motion.button
@@ -73,75 +82,45 @@ export default function AnimatedMenuButton() {
           whileTap={{ scale: 0.92 }}
           className="flex h-14 w-full items-center justify-center text-white"
         >
-          <AnimatePresence mode="wait" initial={false}>
+          {open ? <MenuOpenedIcon /> : <HamburgerIcon />}
+        </motion.button>
+
+        <AnimatePresence initial={false}>
+          {open ? (
             <motion.div
-              key={open ? "opened" : "closed"}
-              initial={{
-                opacity: 0,
-                scale: 0.8,
-                rotate: -10,
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                rotate: 0,
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.8,
-                rotate: 10,
-              }}
+              key="menu-content"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
               transition={{
                 type: "spring",
                 stiffness: 320,
                 damping: 28,
                 mass: 0.8,
+                delay: 0.06,
               }}
+              className="flex flex-col gap-1 px-3 pb-3"
             >
-              {open ? <MenuOpenedIcon /> : <HamburgerIcon />}
+              {navigationItems
+                .filter((item) => item.isEnabled)
+                .map((item) => (
+                  <motion.a
+                    key={item.id}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    className="rounded-2xl px-4 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10"
+                    whileHover={{ x: 4, scale: 1.01 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
             </motion.div>
-          </AnimatePresence>
-        </motion.button>
-
-        <motion.nav
-          initial={false}
-          animate={{
-            opacity: open ? 1 : 0,
-            y: open ? 0 : 12,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 320,
-            damping: 28,
-            mass: 0.8,
-            delay: open ? 0.12 : 0,
-          }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: {
-                staggerChildren: 0.06,
-                delayChildren: 0.12,
-              },
-            },
-          }}
-          className="flex flex-col gap-1 px-3 pb-3"
-        >
-          {navigationItems
-            .filter((item) => item.isEnabled)
-            .map((item) => (
-              <motion.a
-                key={item.id}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                variants={itemVariants}
-                className="rounded-2xl px-4 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10"
-                whileHover={{ x: 4, scale: 1.01 }}
-              >
-                {item.label}
-              </motion.a>
-            ))}
-        </motion.nav>
+          ) : null}
+        </AnimatePresence>
       </motion.div>
     </>
   );
