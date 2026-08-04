@@ -1,4 +1,4 @@
-import Header from "@/components/layout/Header";
+import Navigation from "@/components/navigation";
 import Footer from "@/components/layout/Footer";
 
 import Hero from "./components/Hero";
@@ -10,9 +10,9 @@ import CTA from "./components/CTA";
 export default function HomePage() {
   return (
     <>
-      <Header />
+      <Navigation title="Inicio" />
 
-      <main>
+      <main className="pt-32">
         <Hero />
         <FeaturedProducts />
         <WhyChooseUs />
