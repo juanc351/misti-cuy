@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { NavigationProvider } from "@/components/navigation/NavigationProvider";
 import { metadataConfig } from "@/config";
 
 import "./globals.css";
@@ -27,11 +26,7 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
-        <NavigationProvider>
-          {children}
-        </NavigationProvider>
-      </body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

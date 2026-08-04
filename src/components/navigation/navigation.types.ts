@@ -4,48 +4,28 @@
  * ----------------------------------------------------------------------------
  * Navigation System
  *
- * Contratos oficiales del sistema de navegación.
- *
- * Este módulo será utilizado por toda la aplicación:
- *
- * • Inicio
- * • Mis Cuyes
- * • Aprende
- * • Futuras páginas
+ * Tipos oficiales del sistema de navegación.
  * ============================================================================
  */
 
 /**
- * Página disponible dentro del menú principal.
+ * Item del menú principal.
  */
 export interface NavigationItem {
-  /**
-   * Identificador único.
-   */
   id: string;
-
-  /**
-   * Texto visible.
-   */
   label: string;
-
-  /**
-   * Ruta.
-   */
+  title: string;
   href: string;
-
-  /**
-   * Indica si la opción está habilitada.
-   */
   isEnabled: boolean;
 }
 
 /**
- * Propiedades del componente principal.
+ * Item del menú principal.
  */
-export interface NavigationProps {
-  /**
-   * Título mostrado en la versión móvil.
-   */
+export interface NavigationItem {
+  id: string;
+  label: string;
   title: string;
+  href: string;
+  isEnabled: boolean;
 }

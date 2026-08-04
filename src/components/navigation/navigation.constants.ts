@@ -6,9 +6,9 @@ import type { NavigationItem } from "./navigation.types";
  * ----------------------------------------------------------------------------
  * Navigation System
  *
- * Opciones oficiales del menú principal.
+ * Fuente oficial de la navegación pública.
  *
- * Cualquier nueva sección de la aplicación deberá registrarse aquí.
+ * Todas las páginas públicas deben registrarse aquí.
  * ============================================================================
  */
 
@@ -16,21 +16,24 @@ export const navigationItems: NavigationItem[] = [
   {
     id: "home",
     label: "Inicio",
+    title: "Inicio",
     href: "/",
     isEnabled: true,
   },
 
   {
-    id: "catalog",
+    id: "mis-cuyes",
     label: "Mis Cuyes",
-    href: "/catalog",
+    title: "Mis Cuyes",
+    href: "/mis-cuyes",
     isEnabled: true,
   },
 
   {
-    id: "learning",
+    id: "aprende",
     label: "Aprende",
-    href: "/learning",
+    title: "Aprende",
+    href: "/aprende",
     isEnabled: true,
   },
 ];
