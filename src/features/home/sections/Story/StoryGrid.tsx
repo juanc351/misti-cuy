@@ -7,10 +7,11 @@ export default function StoryGrid() {
     <>
       {stories
         .filter((story) => story.status === "published")
-        .map((story) => (
+        .map((story, index) => (
           <StoryScene
             key={story.id}
             story={story}
+            isReversed={index % 2 === 1}
           />
         ))}
     </>

@@ -8,7 +8,7 @@ export default function HeroScrollIndicator() {
       </div>
 
       <span className="text-sm font-semibold uppercase tracking-[0.25em] text-white/80 sm:text-base">
-        Sigue bajando para conocer mi historia
+        DESCUBRE CÓMO NACE ESTA GRANJA
       </span>
     </div>
   );

@@ -7,9 +7,8 @@ export const stories: Story[] = [
     title: "Todo comenzó con una pregunta.",
     description:
       "¿Era posible construir una granja de cuyes moderna desde cero y documentar cada paso del camino?",
-    conclusion:
-      "Ese día nació Misti Cuy.",
-    image: "/images/story/chapter-01.webp",
+    conclusion: "Ese día nació Misti Cuy.",
+    image: "/assets/images/hero/hero-home.png",
     layout: "right",
     status: "published",
   },
@@ -20,9 +19,8 @@ export const stories: Story[] = [
     title: "La planificación fue el primer desafío.",
     description:
       "Antes de construir, fue necesario estudiar, investigar y comprender cómo debía funcionar una granja tecnificada.",
-    conclusion:
-      "Cada decisión definiría el futuro del proyecto.",
-    image: "/images/story/chapter-02.webp",
+    conclusion: "Cada decisión definiría el futuro del proyecto.",
+    image: "/assets/images/hero/hero-aprende.png",
     layout: "left",
     status: "published",
   },
@@ -33,9 +31,8 @@ export const stories: Story[] = [
     title: "Comenzamos a construir.",
     description:
       "Cada avance, por pequeño que fuera, representaba un paso más hacia el objetivo de crear una granja modelo.",
-    conclusion:
-      "La historia apenas comenzaba.",
-    image: "/images/story/chapter-03.webp",
+    conclusion: "La historia apenas comenzaba.",
+    image: "/assets/images/hero/hero-mis-cuyes.png",
     layout: "right",
     status: "published",
   },
@@ -46,9 +43,8 @@ export const stories: Story[] = [
     title: "El camino continúa.",
     description:
       "La historia de Misti Cuy seguirá creciendo capítulo tras capítulo junto con cada nuevo logro alcanzado.",
-    conclusion:
-      "Este no es el final, es solo el comienzo.",
-    image: "/images/story/chapter-04.webp",
+    conclusion: "Este no es el final, es solo el comienzo.",
+    image: "/assets/images/hero/hero-home.png",
     layout: "left",
     status: "published",
   },

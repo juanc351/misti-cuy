@@ -1,72 +1,133 @@
-import Image from "next/image";
+"use client";
 
+import Image from "next/image";
+import { motion } from "framer-motion";
 import type { Story } from "../../types/story.types";
 
 interface StorySceneProps {
   story: Story;
+  isReversed: boolean;
 }
 
-export default function StoryScene({ story }: StorySceneProps) {
-  const imageFirst = story.layout === "left";
+const container = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
 
-  return (
-    <section className="min-h-[100svh] snap-start bg-transparent">
-      <div className="mx-auto grid min-h-[100svh] max-w-7xl grid-cols-1 items-center gap-[clamp(2rem,5vw,6rem)] px-6 py-[clamp(8rem,10svh,12rem)] sm:px-8 lg:grid-cols-[45%_55%] lg:px-12 xl:px-16">
-        {imageFirst ? (
-          <StoryImage image={story.image} title={story.title} />
-        ) : null}
+const item = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+    },
+  },
+};
 
-        <StoryContent story={story} />
-
-        {!imageFirst ? (
-          <StoryImage image={story.image} title={story.title} />
-        ) : null}
-      </div>
-    </section>
-  );
-}
-
-interface StoryImageProps {
-  image: string;
-  title: string;
-}
-
-function StoryImage({ image, title }: StoryImageProps) {
-  return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[clamp(1.5rem,3vw,2.25rem)] shadow-[0_24px_80px_rgba(0,0,0,0.24)] lg:aspect-[5/6]">
-      <Image
-        src={image}
-        alt={title}
-        fill
-        className="object-cover"
-        sizes="(min-width: 1024px) 45vw, 100vw"
-      />
-    </div>
-  );
-}
-
-interface StoryContentProps {
-  story: Story;
-}
-
-function StoryContent({ story }: StoryContentProps) {
-  return (
-    <div className="mx-auto flex w-full max-w-[40rem] flex-col gap-[clamp(1.25rem,2.2vw,1.75rem)] text-left lg:mx-0">
-      <span className="text-[0.8rem] font-semibold uppercase tracking-[0.35em] text-[#A5D66A]">
+export default function StoryScene({
+  story,
+  isReversed,
+}: StorySceneProps) {
+  const textBlock = (
+    <motion.div
+      variants={container}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.25 }}
+      className="flex flex-col justify-center gap-[clamp(1rem,2vh,2rem)] px-[clamp(2rem,5vw,5rem)] py-[clamp(3rem,8vh,6rem)]"
+    >
+      <motion.span
+        variants={item}
+        className="text-sm font-semibold uppercase tracking-[0.25em] text-primary"
+      >
         Capítulo {story.chapter}
-      </span>
+      </motion.span>
 
-      <h2 className="max-w-[clamp(18rem,40vw,32rem)] text-[clamp(2rem,4vw,3.25rem)] font-black leading-[1.02] tracking-[-0.03em] text-white sm:text-[clamp(2.25rem,5vw,3.75rem)]">
+      <motion.h2
+        variants={item}
+        className="text-[clamp(2.5rem,5vw,4.5rem)] font-black leading-none text-foreground"
+      >
         {story.title}
-      </h2>
+      </motion.h2>
 
-      <p className="max-w-[clamp(18rem,40vw,32rem)] text-[clamp(1rem,1.6vw,1.125rem)] leading-[1.8] text-slate-200">
+      <motion.p
+        variants={item}
+        className="max-w-xl text-lg leading-8 text-muted-foreground"
+      >
         {story.description}
-      </p>
+      </motion.p>
 
-      <p className="max-w-[clamp(18rem,40vw,32rem)] text-[clamp(1rem,1.6vw,1.125rem)] leading-[1.8] text-slate-300/90">
+      <motion.blockquote
+        variants={item}
+        className="border-l-2 border-primary pl-6 text-lg italic text-foreground"
+      >
         {story.conclusion}
-      </p>
-    </div>
+      </motion.blockquote>
+    </motion.div>
+  );
+
+  const imageBlock = (
+    <motion.div
+      initial={{
+        opacity: 0,
+        scale: 1.08,
+        clipPath: "inset(20% 0 20% 0)",
+      }}
+      whileInView={{
+        opacity: 1,
+        scale: 1,
+        clipPath: "inset(0% 0 0% 0)",
+      }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{
+        duration: 1,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className="relative min-h-[60svh] overflow-hidden"
+    >
+      <Image
+        src={story.image}
+        alt={story.title}
+        fill
+        sizes="(max-width:768px)100vw,55vw"
+        className="object-cover transition-transform duration-700"
+      />
+    </motion.div>
+  );
+
+  return (
+    <article
+      className="grid min-h-[100svh] grid-cols-1 overflow-hidden md:grid-cols-[45%_55%]"
+      aria-label={`Capítulo ${story.chapter}`}
+    >
+      {/* MOBILE */}
+      <div className="contents md:hidden">
+        {textBlock}
+        {imageBlock}
+      </div>
+
+      {/* DESKTOP */}
+      <div className="hidden md:contents">
+        {isReversed ? (
+          <>
+            {imageBlock}
+            {textBlock}
+          </>
+        ) : (
+          <>
+            {textBlock}
+            {imageBlock}
+          </>
+        )}
+      </div>
+    </article>
   );
 }

@@ -1,4 +1,7 @@
-﻿import type { ReactElement } from "react";
+﻿"use client";
+
+import type { ReactElement } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 import HeroBackground from "./HeroBackground";
 import HeroContent from "./HeroContent";
@@ -6,8 +9,21 @@ import HeroContainer from "./HeroContainer";
 import HeroScrollIndicator from "./HeroScrollIndicator";
 
 export default function Hero(): ReactElement {
+  const { scrollYProgress } = useScroll();
+
+  // Solo afecta el primer tramo del Hero
+  const opacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.12], [1, 0.98]);
+
   return (
-    <section id="hero" className="relative min-h-screen overflow-hidden">
+    <motion.section
+      id="hero"
+      style={{
+        opacity,
+        scale,
+      }}
+      className="relative min-h-screen overflow-hidden"
+    >
       <HeroBackground />
 
       <HeroContainer>
@@ -19,6 +35,6 @@ export default function Hero(): ReactElement {
           </div>
         </div>
       </HeroContainer>
-    </section>
+    </motion.section>
   );
 }
