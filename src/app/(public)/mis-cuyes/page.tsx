@@ -1,7 +1,9 @@
 import Navigation from "@/components/navigation/Navigation";
 import MisCuyesModule from "@/features/mis-cuyes/MisCuyesPage";
 
-export default function MisCuyesPage() {
+export default async function MisCuyesPage() {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
   return (
     <>
       <Navigation />

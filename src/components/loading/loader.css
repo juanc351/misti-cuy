@@ -1,0 +1,39 @@
+.loader-animation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform-origin: center;
+  will-change: transform;
+
+  animation: loaderRotate 1.2s linear infinite;
+}
+
+.loader-transition {
+  animation: loaderFade .2s ease-in-out;
+  will-change: opacity;
+}
+
+@keyframes loaderRotate {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+@keyframes loaderFade {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
