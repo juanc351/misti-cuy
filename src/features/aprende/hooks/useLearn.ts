@@ -5,7 +5,6 @@ import { learnService } from "../services/learn.service";
 import type {
   LearnArticle,
   LearnCategory,
-  LearnSubcategory,
   LearnView,
 } from "../types/learn.types";
 
@@ -17,9 +16,6 @@ export function useLearn(): UseLearn {
 
   const [selectedCategory, setSelectedCategory] =
     useState<LearnCategory>();
-
-  const [selectedSubcategory, setSelectedSubcategory] =
-    useState<LearnSubcategory>();
 
   const [selectedArticle, setSelectedArticle] =
     useState<LearnArticle | undefined>(
@@ -41,22 +37,10 @@ export function useLearn(): UseLearn {
       learnService.getCategory(categoryId);
 
     setSelectedCategory(category);
-
-    setSelectedSubcategory(undefined);
   }
 
-  function selectSubcategory(
-    subcategoryId: string
-  ) {
-    const subcategory =
-      learnService
-        .getSubcategories()
-        .find(
-          (item) =>
-            item.id === subcategoryId
-        );
-
-    setSelectedSubcategory(subcategory);
+  function clearCategory() {
+    setSelectedCategory(undefined);
   }
 
   function selectArticle(
@@ -80,16 +64,11 @@ export function useLearn(): UseLearn {
 
     selectedCategory,
 
-    selectedSubcategory,
-
     articles:
       learnService.getArticles(),
 
     categories:
       learnService.getCategories(),
-
-    subcategories:
-      learnService.getSubcategories(),
 
     openLibrary,
 
@@ -97,7 +76,7 @@ export function useLearn(): UseLearn {
 
     selectCategory,
 
-    selectSubcategory,
+    clearCategory,
 
     selectArticle,
 

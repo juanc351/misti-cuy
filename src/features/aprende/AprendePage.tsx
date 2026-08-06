@@ -15,8 +15,6 @@ export default function AprendePage() {
 
     categories,
 
-    subcategories,
-
     articles,
 
     openViewer,
@@ -24,8 +22,6 @@ export default function AprendePage() {
     openLibrary,
 
     selectCategory,
-
-    selectSubcategory,
 
     selectArticle,
   } = useLearn();
@@ -35,28 +31,47 @@ export default function AprendePage() {
   }
 
   return (
-    <>
-      {view === "viewer" ? (
-        <ArticleViewer
-          article={selectedArticle}
+    <div
+      className="
+        flex
+        min-h-screen
+        flex-col
+        bg-[#0A0A0A]
+      "
+    >
+      <main className="flex-1">
+
+        {view === "viewer" ? (
+          <ArticleViewer
+            article={selectedArticle}
+            onOpenLibrary={openLibrary}
+          />
+        ) : (
+          <Library
+            categories={categories}
+            articles={articles}
+            onSelectCategory={selectCategory}
+            onSelectArticle={selectArticle}
+          />
+        )}
+
+      </main>
+
+      <div
+        className="
+          sticky
+          bottom-0
+          z-50
+          shrink-0
+        "
+      >
+        <LearnBottomNavigation
+          view={view}
+          onOpenViewer={openViewer}
           onOpenLibrary={openLibrary}
         />
-      ) : (
-        <Library
-          categories={categories}
-          subcategories={subcategories}
-          articles={articles}
-          onSelectCategory={selectCategory}
-          onSelectSubcategory={selectSubcategory}
-          onSelectArticle={selectArticle}
-        />
-      )}
+      </div>
 
-      <LearnBottomNavigation
-        view={view}
-        onOpenViewer={openViewer}
-        onOpenLibrary={openLibrary}
-      />
-    </>
+    </div>
   );
 }

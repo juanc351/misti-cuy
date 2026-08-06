@@ -18,15 +18,30 @@ export interface LearnTag {
 }
 
 /* ==========================================================
+   ARTICLE IMAGES
+========================================================== */
+
+export interface LearnImage {
+  url: string;
+  alt: string;
+}
+
+/* ==========================================================
    CATEGORIES
 ========================================================== */
 
 export interface LearnCategory {
   id: string;
+
   name: string;
+
   slug: string;
+
   description: string;
+
   icon: string;
+
+  cover: LearnImage;
 }
 
 /* ==========================================================
@@ -39,15 +54,6 @@ export interface LearnSubcategory {
   name: string;
   slug: string;
   description: string;
-}
-
-/* ==========================================================
-   ARTICLE IMAGES
-========================================================== */
-
-export interface LearnImage {
-  url: string;
-  alt: string;
 }
 
 /* ==========================================================

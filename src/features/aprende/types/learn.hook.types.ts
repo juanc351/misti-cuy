@@ -1,12 +1,10 @@
 import type {
   LearnArticle,
   LearnCategory,
-  LearnSubcategory,
   LearnView,
 } from "./learn.types";
 
 export interface UseLearn {
-
   view: LearnView;
 
   latestArticle?: LearnArticle;
@@ -15,13 +13,9 @@ export interface UseLearn {
 
   selectedCategory?: LearnCategory;
 
-  selectedSubcategory?: LearnSubcategory;
-
   articles: LearnArticle[];
 
   categories: LearnCategory[];
-
-  subcategories: LearnSubcategory[];
 
   openLibrary: () => void;
 
@@ -31,9 +25,7 @@ export interface UseLearn {
     categoryId: string
   ) => void;
 
-  selectSubcategory: (
-    subcategoryId: string
-  ) => void;
+  clearCategory: () => void;
 
   selectArticle: (
     articleId: string

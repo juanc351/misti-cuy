@@ -9,6 +9,8 @@ import type {
   LearnBottomNavigationProps,
 } from "./learn-navigation.types";
 
+export const LEARN_BOTTOM_NAV_HEIGHT = 96;
+
 export default function LearnBottomNavigation({
   view,
   onOpenViewer,
@@ -17,9 +19,11 @@ export default function LearnBottomNavigation({
   return (
     <nav
       className="
-        sticky
+        fixed
+        inset-x-0
         bottom-0
-        z-40
+        z-50
+        h-24
         bg-[#0A0A0A]
         border
         border-lime-700
@@ -28,7 +32,7 @@ export default function LearnBottomNavigation({
         py-2
       "
     >
-      <div className="flex items-center">
+      <div className="flex h-full items-center">
 
         <LearnBottomNavigationItem
           active={view === "viewer"}
@@ -38,7 +42,7 @@ export default function LearnBottomNavigation({
           <FileText size={34} />
         </LearnBottomNavigationItem>
 
-        <div className="w-px h-12 bg-zinc-700" />
+        <div className="h-12 w-px bg-zinc-700" />
 
         <LearnBottomNavigationItem
           active={view === "library"}

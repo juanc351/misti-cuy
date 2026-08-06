@@ -1,0 +1,867 @@
+# 2. El Artículo
+
+## 2.1 Definición
+
+Un artículo es la unidad fundamental de conocimiento de Aprende.
+
+Cada artículo desarrolla un único tema específico relacionado con la producción de cuyes para consumo humano y se representa mediante una estructura editorial compuesta por metadatos y bloques de contenido.
+
+Todo el conocimiento almacenado en Aprende deberá organizarse mediante artículos.
+
+---
+
+## 2.2 Principios del artículo
+
+Todo artículo deberá cumplir obligatoriamente los siguientes principios:
+
+### Unidad de conocimiento
+
+Cada artículo representa una única unidad de conocimiento dentro de la Biblioteca Aprende.
+
+El contenido deberá estar orientado a desarrollar un único tema principal.
+
+---
+
+### Un único tema principal
+
+Un artículo no deberá desarrollar múltiples temas independientes.
+
+Cuando un tema pueda abordarse de manera autónoma, deberá convertirse en un artículo independiente y relacionarse mediante enlaces internos.
+
+---
+
+### Metadatos
+
+Todo artículo deberá contener un conjunto de metadatos que permitan su organización, clasificación, búsqueda, relación e indexación dentro de la plataforma.
+
+Los metadatos no forman parte del contenido visible del artículo.
+
+---
+
+### Bloques de contenido
+
+Todo el contenido visible para el lector estará compuesto exclusivamente por bloques editoriales definidos por la plataforma.
+
+No existirá contenido libre fuera de dichos bloques.
+
+---
+
+## 2.3 Categoría principal
+
+Todo artículo deberá pertenecer obligatoriamente a una única categoría principal de la Biblioteca Aprende.
+
+La categoría principal determinará su ubicación dentro de la biblioteca.
+
+Un artículo no podrá pertenecer simultáneamente a dos o más categorías principales.
+
+---
+
+## 2.4 Relación entre artículos
+
+Cuando un artículo esté relacionado con otros temas, dichas relaciones se establecerán mediante enlaces internos, etiquetas y artículos relacionados.
+
+Las relaciones entre artículos no modificarán su categoría principal.
+
+---
+
+## 2.5 Justificación
+
+La utilización de una única categoría principal garantiza:
+
+• Una biblioteca organizada y predecible.
+
+• La ausencia de artículos duplicados.
+
+• Una clasificación consistente.
+
+• Una navegación clara para el usuario.
+
+• Una administración sencilla.
+
+• Escalabilidad para miles de artículos.
+## 2.6 Alcance del artículo
+
+Un artículo comprende todos los bloques editoriales que lo componen.
+
+El artículo inicia con su primer bloque de contenido y finaliza únicamente después del último bloque editorial.
+
+Además del contenido principal, un artículo podrá incluir bloques complementarios, entre ellos:
+
+• Referencias bibliográficas.
+• Documentos recomendados.
+• Videos recomendados.
+• Artículos relacionados.
+• Siguiente lectura.
+• Otros bloques editoriales definidos por la plataforma.
+
+Todos estos elementos forman parte del artículo y deberán administrarse desde el modelo editorial.
+
+El visor será responsable de presentar dichos bloques respetando el orden establecido por el modelo editorial.
+
+# 3. Arquitectura del Artículo
+
+## 3.1 Estructura General
+
+Todo artículo de Aprende estará compuesto por tres áreas claramente diferenciadas:
+
+• Metadatos.
+• Contenido Principal.
+• Contenido Complementario.
+
+Las tres áreas forman parte de un mismo artículo y cumplen funciones específicas dentro de la plataforma.
+
+---
+
+## 3.2 Metadatos
+
+Los metadatos contienen la información necesaria para identificar, organizar, clasificar, buscar, relacionar, indexar y administrar un artículo.
+
+Los metadatos no forman parte del contenido principal que consume el lector.
+
+Podrán ser utilizados por el Buscador, la Biblioteca, el Panel Administrador, los motores de búsqueda, los sistemas de Inteligencia Artificial y cualquier otro componente de la plataforma.
+
+Cuando sea necesario para mejorar la experiencia del usuario o el posicionamiento del artículo, determinados metadatos podrán mostrarse dentro del visor.
+
+---
+
+## 3.3 Contenido Principal
+
+El Contenido Principal corresponde al desarrollo del tema del artículo.
+
+Todo el contenido visible para el lector deberá construirse exclusivamente mediante bloques editoriales definidos por la plataforma.
+
+No existirá contenido libre fuera de dichos bloques.
+
+El orden de los bloques dependerá del tipo de artículo y del objetivo editorial.
+
+---
+
+## 3.4 Contenido Complementario
+
+El Contenido Complementario agrupa los bloques que enriquecen el artículo sin formar parte del desarrollo principal del tema.
+
+Entre ellos podrán incluirse, entre otros:
+
+• Referencias bibliográficas.
+• Documentos recomendados.
+• Videos recomendados.
+• Artículos relacionados.
+• Siguiente lectura.
+• Otros bloques editoriales definidos por la plataforma.
+
+Todo el Contenido Complementario forma parte del artículo y será administrado mediante el modelo editorial.
+
+---
+
+## 3.5 Independencia
+
+Los metadatos, el Contenido Principal y el Contenido Complementario deberán mantenerse independientes entre sí.
+
+La modificación de una de estas áreas no deberá alterar la estructura de las demás, salvo cuando exista una dependencia editorial explícita.
+
+---
+
+## 3.6 Categoría Principal
+
+Todo artículo deberá pertenecer obligatoriamente a una única categoría principal.
+
+La categoría principal determinará la ubicación del artículo dentro de la Biblioteca Aprende.
+
+Las relaciones con otros temas se establecerán mediante enlaces internos, etiquetas y artículos relacionados, sin modificar la categoría principal.
+
+---
+
+## 3.7 Alcance del Artículo
+
+Un artículo inicia con su Contenido Principal y finaliza únicamente después del último bloque de Contenido Complementario.
+
+Todos los bloques que conforman el artículo serán administrados desde el modelo editorial y renderizados por el visor respetando el orden definido por la plataforma.
+# 4. Metadatos
+
+## 4.1 Definición
+
+Los metadatos corresponden a la información que identifica, clasifica, organiza y administra un artículo dentro de Aprende.
+
+Los metadatos permiten que el artículo sea utilizado por la Biblioteca, el Buscador, el Panel Administrador, los motores de búsqueda y los sistemas de Inteligencia Artificial.
+
+Los metadatos son independientes del Contenido Principal y del Contenido Complementario.
+
+---
+
+## 4.2 Objetivo
+
+Los metadatos tienen como objetivo:
+
+• Identificar un artículo de manera única.
+• Organizar el conocimiento dentro de la Biblioteca.
+• Facilitar la búsqueda de información.
+• Mejorar el posicionamiento en motores de búsqueda.
+• Proporcionar contexto a los sistemas de Inteligencia Artificial.
+• Administrar el ciclo de vida del artículo.
+
+---
+
+## 4.3 Metadatos Obligatorios
+
+Todo artículo deberá contener obligatoriamente los siguientes metadatos:
+
+• Título.
+• Categoría Principal.
+• Autor.
+• Resumen.
+
+Un artículo no podrá publicarse si no contiene estos metadatos.
+
+---
+
+## 4.4 Metadatos Opcionales
+
+Dependiendo del contenido del artículo, podrán utilizarse los siguientes metadatos:
+
+• Imagen de portada.
+• Nivel de dificultad.
+• Etiquetas.
+
+La utilización de estos metadatos dependerá de las necesidades editoriales del artículo.
+
+---
+
+## 4.5 Autor
+
+Todo artículo deberá estar asociado a un autor registrado dentro de la plataforma.
+
+El autor será responsable del contenido publicado.
+
+---
+
+## 4.6 Resumen
+
+Todo artículo deberá contar con un resumen.
+
+El resumen podrá ser utilizado por:
+
+• La Biblioteca.
+• El Buscador.
+• Los motores de búsqueda.
+• Los sistemas de Inteligencia Artificial.
+• Las vistas previas del artículo.
+
+---
+
+## 4.7 Imagen de Portada
+
+La imagen de portada será opcional.
+
+Solo deberá utilizarse cuando aporte valor al contenido o mejore la comprensión del artículo.
+
+---
+
+## 4.8 Nivel de Dificultad
+
+Cuando corresponda, el artículo podrá clasificarse según su nivel de dificultad:
+
+• Principiante.
+• Intermedio.
+
+---
+
+## 4.9 Etiquetas
+
+Las etiquetas serán opcionales.
+
+Su utilización dependerá de su aporte a la organización de la Biblioteca, al Buscador y al posicionamiento en motores de búsqueda.
+
+No deberán utilizarse etiquetas que no aporten valor.
+
+---
+
+## 4.10 Título
+
+El título constituye el principal identificador editorial del artículo.
+
+Todo artículo deberá tener un título claro, descriptivo y representativo del tema desarrollado.
+
+El título será utilizado por la Biblioteca, el Buscador, los motores de búsqueda, los sistemas de Inteligencia Artificial y los distintos visores de la plataforma.
+
+---
+
+## 4.11 Unicidad del Título
+
+El título de un artículo deberá ser único dentro de Aprende.
+
+No podrán existir dos artículos con el mismo título.
+
+Esta restricción garantiza:
+
+• Evitar contenido duplicado.
+• Facilitar la administración de la Biblioteca.
+• Mejorar la búsqueda de información.
+• Favorecer el posicionamiento en motores de búsqueda.
+• Mantener una organización consistente del conocimiento.
+
+---
+
+## 4.12 Modificación de Metadatos
+
+Los metadatos podrán modificarse después de la publicación del artículo cuando sea necesario mantener la información actualizada o mejorar su organización y posicionamiento.
+
+Toda modificación deberá respetar los principios establecidos en la presente Constitución Editorial.
+# 5. Contenido Principal
+
+## 5.1 Definición
+
+El Contenido Principal es el conjunto de bloques editoriales cuya finalidad es desarrollar y explicar el tema principal del artículo.
+
+El Contenido Principal constituye el núcleo del artículo y representa el conocimiento que Aprende desea transmitir al lector.
+
+Todo artículo deberá contener obligatoriamente un Contenido Principal.
+
+---
+
+## 5.2 Objetivo
+
+El objetivo del Contenido Principal es permitir que el lector comprenda completamente el tema desarrollado en el artículo.
+
+El Contenido Principal deberá ser suficiente para transmitir el conocimiento sin depender del Contenido Complementario.
+
+---
+
+## 5.3 Principio de Autosuficiencia
+
+Todo Contenido Principal deberá ser autosuficiente.
+
+Si se eliminan las referencias bibliográficas, documentos recomendados, videos recomendados, artículos relacionados y cualquier otro bloque perteneciente al Contenido Complementario, el lector deberá seguir siendo capaz de comprender completamente el tema principal del artículo.
+
+El Contenido Complementario tiene como finalidad ampliar, respaldar o profundizar la información presentada, pero nunca reemplazar el conocimiento desarrollado en el Contenido Principal.
+
+---
+
+## 5.4 Obligatoriedad
+
+Todo artículo deberá contener obligatoriamente un Contenido Principal.
+
+Un artículo no podrá publicarse si no contiene bloques pertenecientes al Contenido Principal.
+
+Los bloques pertenecientes al Contenido Complementario no podrán sustituir al Contenido Principal.
+
+---
+
+## 5.5 Unicidad del Contenido Principal
+
+Todo artículo deberá contener un único Contenido Principal.
+
+El Contenido Principal estará compuesto por uno o más bloques editoriales organizados de forma continua para desarrollar el tema principal del artículo.
+
+No podrán existir múltiples Contenidos Principales dentro de un mismo artículo.
+
+Una vez finalizado el Contenido Principal, únicamente podrán incorporarse bloques pertenecientes al Contenido Complementario.
+
+---
+
+## 5.6 Organización del Contenido Principal
+
+El Contenido Principal no estará sujeto a una estructura fija o predeterminada.
+
+La organización y el orden de los bloques editoriales dependerán del tema desarrollado y del objetivo del artículo.
+
+Todo Contenido Principal deberá mantener un orden lógico y facilitar la comprensión del tema.
+
+La selección y el orden de los bloques deberán priorizar siempre:
+
+• Claridad.
+
+• Coherencia.
+
+• Continuidad.
+
+• Comprensión.
+
+• Experiencia de aprendizaje.
+
+---
+
+## 5.7 Secuencia Editorial
+
+Los bloques editoriales deberán organizarse siguiendo una secuencia lógica que permita desarrollar el conocimiento de forma progresiva y comprensible para el lector.
+
+Cada bloque deberá aportar información relevante al desarrollo del tema y mantener continuidad con los bloques que lo preceden y lo suceden.
+
+La organización del contenido responderá siempre a criterios editoriales y de aprendizaje, nunca a criterios de diseño visual.
+
+---
+
+## 5.8 Evolución del Modelo Editorial
+
+Todo el Contenido Principal deberá construirse exclusivamente utilizando bloques editoriales oficiales definidos por la plataforma.
+
+No se permitirá contenido libre ni estructuras no contempladas por el modelo editorial.
+
+Cuando un artículo requiera representar información que no pueda expresarse mediante los bloques existentes, la plataforma deberá incorporar un nuevo bloque editorial al Catálogo Oficial de Bloques Editoriales.
+
+Toda ampliación del catálogo de bloques deberá formar parte de una nueva versión de la Constitución Editorial.
+
+La evolución del modelo editorial deberá garantizar la compatibilidad con los artículos previamente publicados.
+# 6. Contenido Complementario
+
+## 6.1 Definición
+
+El Contenido Complementario es el conjunto de bloques editoriales cuya finalidad es complementar, respaldar, ampliar o enriquecer el Contenido Principal de un artículo.
+
+Aunque forma parte del artículo, el Contenido Complementario no desarrolla el tema principal.
+
+---
+
+## 6.2 Objetivo
+
+El Contenido Complementario tiene como objetivo proporcionar al lector información y recursos adicionales que amplíen el conocimiento presentado en el Contenido Principal.
+
+Su finalidad es fortalecer el valor educativo del artículo sin sustituir el desarrollo del tema.
+
+---
+
+## 6.3 Principios
+
+Todo Contenido Complementario deberá cumplir los siguientes principios:
+
+• Complementar el Contenido Principal.
+
+• Aportar valor al lector.
+
+• Mantener relación directa con el tema del artículo.
+
+• Estar compuesto únicamente por bloques editoriales oficiales.
+
+• Respetar la estructura definida por la Constitución Editorial.
+
+---
+
+## 6.4 Dependencia
+
+El Contenido Complementario dependerá siempre del Contenido Principal.
+
+No podrá existir un artículo compuesto únicamente por Contenido Complementario.
+
+La eliminación del Contenido Complementario no deberá impedir la comprensión del tema desarrollado en el Contenido Principal.
+
+---
+
+## 6.5 Organización
+
+El Contenido Complementario comenzará únicamente después de finalizar el Contenido Principal.
+
+No podrá interrumpir el desarrollo del tema principal.
+
+Todos sus bloques deberán mantener un orden lógico y facilitar la consulta de recursos adicionales.
+
+---
+
+## 6.6 Composición
+
+El Contenido Complementario estará compuesto exclusivamente por bloques editoriales oficiales definidos por la plataforma.
+
+No existirá contenido libre fuera del Catálogo Oficial de Bloques Editoriales.
+
+---
+
+## 6.7 Tipos de Contenido Complementario
+
+El Contenido Complementario podrá incluir, entre otros, los siguientes tipos de información:
+
+• Referencias bibliográficas.
+
+• Documentos recomendados.
+
+• Videos recomendados.
+
+• Artículos relacionados.
+
+• Siguiente lectura.
+
+• Recursos externos.
+
+• Otros bloques aprobados oficialmente.
+
+---
+
+## 6.8 Visibilidad
+
+El Contenido Complementario será visible para el lector.
+
+Cada bloque complementario deberá diferenciarse claramente del Contenido Principal para facilitar la comprensión de la estructura del artículo.
+
+---
+
+## 6.9 Evolución
+
+La incorporación de nuevos bloques de Contenido Complementario requerirá una actualización del Catálogo Oficial de Bloques Editoriales.
+
+No se permitirá la utilización de bloques no definidos por la Constitución Editorial.
+
+Toda evolución deberá garantizar la compatibilidad con los artículos previamente publicados.
+# 7. Bloques Editoriales
+
+## 7.1 Definición
+
+Los bloques editoriales constituyen la unidad mínima de construcción de un artículo dentro de Aprende.
+
+Cada bloque representa un tipo específico de información y posee una finalidad, estructura y comportamiento definidos por el Catálogo Oficial de Bloques Editoriales.
+
+Todo artículo deberá construirse exclusivamente mediante bloques editoriales oficiales.
+
+---
+
+## 7.2 Objetivo
+
+Los bloques editoriales tienen como objetivo permitir la construcción de artículos estructurados, reutilizables, mantenibles y consistentes, independientemente de la tecnología utilizada para su visualización.
+
+---
+
+## 7.3 Principios
+
+Todo bloque editorial deberá cumplir los siguientes principios:
+
+• Tener un propósito claramente definido.
+
+• Representar un único tipo de información.
+
+• Ser reutilizable.
+
+• Ser independiente de cualquier diseño visual.
+
+• Mantener compatibilidad con el resto del modelo editorial.
+
+• Poder ser interpretado por la plataforma, los motores de búsqueda y los sistemas de Inteligencia Artificial.
+
+---
+
+## 7.4 Catálogo Oficial
+
+La definición, estructura, propiedades, restricciones y comportamiento de cada bloque editorial se establecerán en el Catálogo Oficial de Bloques Editoriales.
+
+No podrán utilizarse bloques que no se encuentren definidos en dicho catálogo.
+
+---
+
+## 7.5 Evolución
+
+La incorporación, modificación o eliminación de bloques editoriales requerirá una actualización del Catálogo Oficial de Bloques Editoriales.
+
+Toda modificación deberá garantizar la compatibilidad con los artículos previamente publicados.
+
+---
+
+## 7.6 Independencia
+
+Los bloques editoriales deberán representar únicamente conocimiento.
+
+Su presentación visual, comportamiento en el visor y forma de renderizado dependerán de la plataforma que los utilice y no del modelo editorial.
+# 8. Fuentes y Referencias
+
+## 8.1 Definición
+
+Las fuentes y referencias constituyen el conjunto de recursos utilizados para respaldar, ampliar o verificar la información presentada en un artículo.
+
+Forman parte del Contenido Complementario y representan el fundamento documental del conocimiento publicado en Aprende.
+
+---
+
+## 8.2 Objetivo
+
+Las fuentes y referencias tienen como objetivo:
+
+• Respaldar técnicamente el contenido del artículo.
+
+• Incrementar la credibilidad de la información.
+
+• Facilitar la consulta de material especializado.
+
+• Promover la investigación y el aprendizaje continuo.
+
+• Permitir la verificación del conocimiento publicado.
+
+---
+
+## 8.3 Principios
+
+Toda fuente o referencia deberá cumplir los siguientes principios:
+
+• Estar relacionada con el tema desarrollado.
+
+• Ser identificable.
+
+• Aportar valor al lector.
+
+• Favorecer la consulta de información adicional.
+
+• Mantener la integridad del artículo.
+
+---
+
+## 8.4 Tipos de Fuentes
+
+Aprende podrá utilizar, entre otras, las siguientes fuentes:
+
+• Organismos gubernamentales.
+
+• Universidades.
+
+• Centros de investigación.
+
+• Libros.
+
+• Artículos científicos.
+
+• Revistas especializadas.
+
+• Normas técnicas.
+
+• Documentos PDF.
+
+• Videos.
+
+• Sitios web especializados.
+
+• Publicaciones oficiales.
+
+• Otras fuentes aprobadas por el equipo editorial.
+
+---
+
+## 8.5 Organización
+
+Las fuentes y referencias deberán presentarse de forma ordenada al finalizar el Contenido Principal.
+
+Su organización deberá facilitar la consulta y verificación de la información.
+
+---
+
+## 8.6 Visibilidad
+
+Las fuentes y referencias serán visibles para el lector.
+
+La plataforma no utilizará referencias ocultas destinadas únicamente a motores de búsqueda o sistemas de Inteligencia Artificial.
+
+---
+
+## 8.7 Independencia
+
+La modificación, incorporación o eliminación de una fuente no deberá alterar la estructura del Contenido Principal.
+
+Las fuentes constituyen material de respaldo y consulta.
+
+---
+
+## 8.8 Evolución
+
+La incorporación de nuevos tipos de fuentes o referencias deberá realizarse mediante una actualización del Catálogo Oficial de Bloques Editoriales y respetando los principios establecidos por la presente Constitución Editorial.
+# 9. Principios Editoriales
+
+## 9.1 Propósito
+
+Los principios editoriales constituyen las reglas fundamentales que rigen la creación, organización, mantenimiento y evolución del conocimiento publicado en Aprende.
+
+Toda decisión relacionada con la plataforma deberá respetar estos principios.
+
+---
+
+## 9.2 Principio de Veracidad
+
+Toda información publicada deberá estar basada en conocimiento verificable.
+
+Cuando sea posible, deberá respaldarse mediante fuentes confiables.
+
+---
+
+## 9.3 Principio de Claridad
+
+Todo artículo deberá redactarse utilizando un lenguaje claro, preciso y comprensible para el público objetivo.
+
+La complejidad técnica deberá adaptarse al nivel del artículo sin comprometer la exactitud de la información.
+
+---
+
+## 9.4 Principio de Coherencia
+
+Toda la Biblioteca deberá mantener una estructura editorial uniforme.
+
+Los artículos deberán respetar las mismas reglas de organización, clasificación y construcción.
+
+---
+
+## 9.5 Principio de Escalabilidad
+
+El modelo editorial deberá permitir la incorporación de nuevos artículos, categorías y bloques sin afectar la estructura existente.
+
+Toda evolución deberá preservar la compatibilidad con el conocimiento previamente publicado.
+
+---
+
+## 9.6 Principio de Reutilización
+
+El contenido deberá poder reutilizarse en diferentes plataformas y formatos sin modificar su estructura editorial.
+
+La representación visual dependerá del visor y no del contenido.
+
+---
+
+## 9.7 Principio de Independencia Tecnológica
+
+La Constitución Editorial será independiente de cualquier lenguaje de programación, framework, sistema de almacenamiento o tecnología de presentación.
+
+Su función es definir el conocimiento y no su implementación técnica.
+
+---
+
+## 9.8 Principio de Mantenibilidad
+
+La organización del conocimiento deberá facilitar su actualización, revisión y mantenimiento a lo largo del tiempo.
+
+Las modificaciones no deberán comprometer la integridad de los artículos existentes.
+
+---
+
+## 9.9 Principio de Calidad
+
+Todo artículo deberá aportar valor al lector.
+
+La información publicada deberá ser útil, consistente, verificable y mantener los estándares de calidad establecidos por Aprende.
+
+---
+
+## 9.10 Principio de Evolución
+
+La Constitución Editorial podrá evolucionar cuando las necesidades de la plataforma así lo requieran.
+
+Toda modificación deberá preservar la filosofía, coherencia y estabilidad del modelo editorial.
+# 10. Escalabilidad y Evolución
+
+## 10.1 Objetivo
+
+La presente Constitución Editorial ha sido diseñada para permitir el crecimiento continuo de Aprende sin comprometer la organización, coherencia y calidad del conocimiento publicado.
+
+Toda evolución deberá preservar la estabilidad del modelo editorial.
+
+---
+
+## 10.2 Escalabilidad
+
+El modelo editorial deberá permitir la incorporación de:
+
+• Nuevos artículos.
+
+• Nuevas categorías.
+
+• Nuevos bloques editoriales.
+
+• Nuevos tipos de contenido.
+
+• Nuevas funcionalidades.
+
+Sin afectar la compatibilidad con los artículos previamente publicados.
+
+---
+
+## 10.3 Compatibilidad
+
+Toda modificación realizada sobre el modelo editorial deberá garantizar la compatibilidad con las versiones anteriores.
+
+La evolución del sistema nunca deberá provocar la pérdida de información ni alterar el contenido existente.
+
+---
+
+## 10.4 Versionado
+
+La Constitución Editorial será versionada.
+
+Cada nueva versión deberá documentar los cambios realizados, indicando:
+
+• Versión.
+
+• Fecha de publicación.
+
+• Descripción de los cambios.
+
+• Impacto sobre la plataforma.
+
+---
+
+## 10.5 Evolución del Modelo
+
+Las modificaciones al modelo editorial deberán responder únicamente a necesidades reales de la plataforma.
+
+No se incorporarán nuevas estructuras, categorías o bloques sin una justificación técnica y editorial.
+
+---
+
+## 10.6 Independencia
+
+La evolución del modelo editorial será independiente de las tecnologías utilizadas para desarrollar la plataforma.
+
+Los cambios en el frontend, backend, panel administrador o aplicaciones móviles no deberán modificar los principios establecidos en esta Constitución Editorial.
+
+---
+
+## 10.7 Fuente de Verdad
+
+La presente Constitución Editorial constituye la fuente oficial de verdad para el modelo editorial de Aprende.
+
+Todo desarrollo relacionado con el Backend, Frontend, Panel Administrador, Inteligencia Artificial, SEO, aplicaciones móviles o cualquier otro componente de la plataforma deberá respetar las reglas y principios definidos en este documento.
+# 11. Disposiciones Finales
+
+## 11.1 Alcance
+
+La presente Constitución Editorial establece los principios, normas y criterios que regulan la organización del conocimiento dentro de Aprende.
+
+Sus disposiciones serán de aplicación obligatoria para todos los componentes de la plataforma.
+
+---
+
+## 11.2 Carácter Normativo
+
+Todo desarrollo relacionado con Aprende deberá respetar las reglas definidas en esta Constitución Editorial.
+
+Ningún documento derivado podrá contradecir los principios establecidos en el presente documento.
+
+---
+
+## 11.3 Documentos Derivados
+
+La Constitución Editorial servirá como base para la elaboración de documentos especializados, entre ellos:
+
+• Catálogo Oficial de Bloques Editoriales.
+
+• Manual de Desarrollo de Artículos.
+
+• Guía de Investigación Científica.
+
+• Sistema de Biblioteca.
+
+• Sistema de Búsqueda.
+
+• SEO e Inteligencia Artificial.
+
+• Flujo Editorial.
+
+• Gobernanza Editorial.
+
+Estos documentos desarrollarán aspectos específicos del modelo editorial, respetando en todo momento la presente Constitución.
+
+---
+
+## 11.4 Interpretación
+
+Ante cualquier duda o conflicto de interpretación entre documentos, prevalecerán las disposiciones establecidas en esta Constitución Editorial.
+
+---
+
+## 11.5 Actualización
+
+La Constitución Editorial podrá actualizarse cuando existan cambios significativos en la evolución de Aprende.
+
+Toda actualización deberá preservar la coherencia, estabilidad y compatibilidad del modelo editorial.
+
+---
+
+## 11.6 Vigencia
+
+La presente Constitución Editorial entrará en vigencia desde su aprobación y permanecerá como la fuente oficial de verdad para la organización editorial de Aprende hasta la publicación de una nueva versión.
