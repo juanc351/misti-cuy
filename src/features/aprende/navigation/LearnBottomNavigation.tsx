@@ -1,58 +1,111 @@
+"use client";
+
 import {
-  BookOpen,
   FileText,
+  BookOpen,
 } from "lucide-react";
 
-import LearnBottomNavigationItem from "./LearnBottomNavigationItem";
 
-import type {
-  LearnBottomNavigationProps,
-} from "./learn-navigation.types";
+interface Props {
+  active: "articles" | "library";
+
+  onArticles: () => void;
+
+  onLibrary: () => void;
+}
+
 
 export const LEARN_BOTTOM_NAV_HEIGHT = 96;
 
+
 export default function LearnBottomNavigation({
-  view,
-  onOpenViewer,
-  onOpenLibrary,
-}: LearnBottomNavigationProps) {
+  active,
+  onArticles,
+  onLibrary,
+}: Props) {
+
   return (
     <nav
       className="
         fixed
-        inset-x-0
         bottom-0
+        left-0
+        right-0
         z-50
         h-24
-        bg-[#0A0A0A]
-        border
-        border-lime-700
-        rounded-t-3xl
-        px-4
-        py-2
+        border-t
+        border-white/10
+        bg-[#0A0A0A]/95
+        backdrop-blur-xl
       "
     >
-      <div className="flex h-full items-center">
 
-        <LearnBottomNavigationItem
-          active={view === "viewer"}
-          label="Artículos"
-          onClick={onOpenViewer}
+      <div
+        className="
+          mx-auto
+          flex
+          h-full
+          max-w-xl
+          items-center
+          justify-around
+        "
+      >
+
+        <button
+          type="button"
+          onClick={onArticles}
+          className={`
+            flex
+            flex-col
+            items-center
+            gap-1
+            transition-colors
+            ${
+              active === "articles"
+                ? "text-[#7CB342]"
+                : "text-white"
+            }
+          `}
         >
+
           <FileText size={34} />
-        </LearnBottomNavigationItem>
 
-        <div className="h-12 w-px bg-zinc-700" />
+          <span className="text-sm">
+            Artículos
+          </span>
 
-        <LearnBottomNavigationItem
-          active={view === "library"}
-          label="Biblioteca"
-          onClick={onOpenLibrary}
+        </button>
+
+
+
+        <button
+          type="button"
+          onClick={onLibrary}
+          className={`
+            flex
+            flex-col
+            items-center
+            gap-1
+            transition-colors
+            ${
+              active === "library"
+                ? "text-[#7CB342]"
+                : "text-white"
+            }
+          `}
         >
+
           <BookOpen size={34} />
-        </LearnBottomNavigationItem>
+
+          <span className="text-sm">
+            Biblioteca
+          </span>
+
+        </button>
+
 
       </div>
+
     </nav>
   );
 }

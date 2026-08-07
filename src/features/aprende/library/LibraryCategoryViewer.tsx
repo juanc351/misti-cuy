@@ -1,197 +1,224 @@
 "use client";
 
-import Image from "next/image";
-
 import {
-  LayoutGroup,
   motion,
 } from "framer-motion";
+
+
+import {
+  getCategoryIcon,
+} from "./library-icons";
+
 
 import type {
   LearnArticle,
   LearnCategory,
 } from "../types/learn.types";
 
+
 import LibraryArticles from "./LibraryArticles";
 
+
+
 interface Props {
+
   category: LearnCategory;
 
   articles: LearnArticle[];
 
-  onBack: () => void;
-
   onSelectArticle: (
-    id: string
+    id: string,
+    source?: "articles" | "library"
   ) => void;
+
 }
 
-export default function LibraryCategoryViewer({
-  category,
-  articles,
-  onBack,
-  onSelectArticle,
-}: Props) {
-  return (
-    <LayoutGroup>
 
-      <motion.section
-        layout
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
-        exit={{
-          opacity: 0,
-        }}
-        transition={{
-          duration: .35,
-        }}
-        className="mt-10"
+
+export default function LibraryCategoryViewer({
+
+  category,
+
+  articles,
+
+  onSelectArticle,
+
+}: Props) {
+
+
+  return (
+
+    <motion.section
+
+      layout
+
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+
+      exit={{
+        opacity: 0,
+        y: -20,
+      }}
+
+      transition={{
+        duration: 0.35,
+      }}
+
+      className="
+        px-6
+        pt-8
+        pb-28
+      "
+
+    >
+
+
+      {/* CABECERA DE CATEGORIA */}
+
+      <motion.div
+
+        layoutId={`category-${category.id}`}
+
+        className="
+          mb-8
+        "
+
       >
 
-        <motion.button
-          layout
-          onClick={onBack}
-          whileHover={{
-            x: -4,
-          }}
-          whileTap={{
-            scale: .96,
-          }}
-          className="
-            mb-8
-            rounded-xl
-            border
-            border-white/10
-            px-5
-            py-3
-            transition
-            hover:border-[#7CB342]
-            hover:text-[#7CB342]
-          "
-        >
-          ← Biblioteca
-        </motion.button>
 
-        <motion.div
-          layoutId={`category-${category.id}`}
+        <div
+
           className="
-            overflow-hidden
-            rounded-3xl
-            border
-            border-white/10
-            bg-[#111111]
+            flex
+            items-start
+            gap-6
           "
+
         >
+
+
+          {/* ICONO */}
 
           <motion.div
-            layoutId={`image-${category.id}`}
+
+            layoutId={`icon-${category.id}`}
+
             className="
-              relative
-              aspect-[21/9]
+              flex
+              h-20
+              w-20
+              shrink-0
+              items-center
+              justify-center
+              text-[#7CB342]
             "
+
           >
 
-            <Image
-              src={category.cover.url}
-              alt={category.cover.alt}
-              fill
-              priority
-              className="object-cover"
-            />
-
-            <div
-              className="
-                absolute
-                inset-0
-                bg-gradient-to-t
-                from-black
-                via-black/10
-                to-transparent
-              "
-            />
+            {getCategoryIcon(
+              category.icon,
+              58
+            )}
 
           </motion.div>
 
-          <motion.div
-            layout
-            className="p-10"
-          >
 
-            <motion.p
-              layout
-              className="
-                uppercase
-                tracking-[0.3em]
-                text-[#7CB342]
-              "
-            >
-              Biblioteca
-            </motion.p>
 
-            <motion.h1
-              layout
+          {/* TITULO */}
+
+          <div>
+
+
+            <h1
+
               className="
-                mt-3
-                text-5xl
+                text-4xl
                 font-bold
+                text-white
               "
+
             >
+
               {category.name}
-            </motion.h1>
 
-            <motion.p
-              layout
+            </h1>
+
+
+
+            <span
+
               className="
-                mt-6
-                max-w-3xl
+                mt-1
+                block
                 text-lg
-                leading-8
-                text-gray-400
+                text-gray-300
               "
-            >
-              {category.description}
-            </motion.p>
 
-            <motion.div
-              layout
-              className="mt-8"
             >
 
-              <span
-                className="
-                  rounded-full
-                  bg-[#7CB342]/20
-                  px-5
-                  py-2
-                  text-[#7CB342]
-                "
-              >
-                {articles.length} artículos
-              </span>
+              {articles.length} artículos
 
-            </motion.div>
+            </span>
 
-          </motion.div>
 
-        </motion.div>
+          </div>
 
-        <motion.div
-          layout
+
+        </div>
+
+
+
+
+        {/* DESCRIPCION */}
+
+        <p
+
+          className="
+            mt-6
+            max-w-3xl
+            text-lg
+            leading-8
+            text-gray-300
+          "
+
         >
-          <LibraryArticles
-            articles={articles}
-            onSelectArticle={
-              onSelectArticle
-            }
-          />
-        </motion.div>
 
-      </motion.section>
+          {category.description}
 
-    </LayoutGroup>
+        </p>
+
+
+      </motion.div>
+
+
+
+
+      {/* ARTICULOS */}
+
+      <LibraryArticles
+
+        articles={articles}
+
+        onSelectArticle={
+          (id) =>
+            onSelectArticle(
+              id,
+              "library"
+            )
+        }
+
+      />
+
+
+    </motion.section>
+
   );
+
 }

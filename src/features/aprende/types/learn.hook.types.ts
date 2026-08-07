@@ -1,37 +1,60 @@
 import type {
   LearnArticle,
   LearnCategory,
-  LearnView,
+  LearnNavigationState,
 } from "./learn.types";
 
+
 export interface UseLearn {
-  view: LearnView;
 
   latestArticle?: LearnArticle;
 
+
   selectedArticle?: LearnArticle;
+
 
   selectedCategory?: LearnCategory;
 
+
   articles: LearnArticle[];
+
 
   categories: LearnCategory[];
 
-  openLibrary: () => void;
 
-  openViewer: () => void;
+  history: LearnNavigationState[];
+
+
+  canGoBack: boolean;
+
+
+  push: (
+    state: LearnNavigationState
+  ) => void;
+
+
+  goBack: () => void;
+
+
+  reset: () => void;
+
 
   selectCategory: (
     categoryId: string
   ) => void;
 
+
   clearCategory: () => void;
 
+
   selectArticle: (
-    articleId: string
+    articleId: string,
+    source?: "articles" | "library"
   ) => void;
+
 
   searchArticles: (
     query: string
   ) => LearnArticle[];
+
 }

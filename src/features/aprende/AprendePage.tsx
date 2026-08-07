@@ -1,77 +1,118 @@
 "use client";
 
-import { useLearn } from "./hooks/useLearn";
+import { useLearnContext } from "./LearnProvider";
 
-import ArticleViewer from "./viewer/ArticleViewer";
 import Library from "./library/Library";
+import ArticleViewer from "./viewer/ArticleViewer";
 
-import { LearnBottomNavigation } from "./navigation";
+import LearnBottomNavigation from "./navigation/LearnBottomNavigation";
+
 
 export default function AprendePage() {
+
   const {
-    view,
-
+    history,
     selectedArticle,
-
     categories,
-
     articles,
-
-    openViewer,
-
-    openLibrary,
-
     selectCategory,
-
     selectArticle,
-  } = useLearn();
+    reset,
+    push,
+  } = useLearnContext();
 
-  if (!selectedArticle) {
-    return null;
+
+  const current =
+    history[history.length - 1]?.screen;
+
+
+  const currentState =
+    history[history.length - 1];
+
+
+  function openArticles() {
+
+    reset();
+
   }
 
+
+  function openLibrary() {
+
+    if (
+      currentState?.screen !== "library"
+    ) {
+
+      push({
+        screen: "library",
+        source: "library",
+      });
+
+    }
+
+  }
+
+
+  const isArticle =
+    current === "article" &&
+    selectedArticle;
+
+
+  const isLibrary =
+    current === "library" ||
+    current === "category" ||
+    current === "subcategory";
+
+
   return (
-    <div
-      className="
-        flex
-        min-h-screen
-        flex-col
-        bg-[#0A0A0A]
-      "
-    >
+    <div className="flex min-h-screen flex-col pb-24">
+
+
       <main className="flex-1">
 
-        {view === "viewer" ? (
+
+        {isArticle ? (
+
           <ArticleViewer
             article={selectedArticle}
-            onOpenLibrary={openLibrary}
           />
+
+
         ) : (
+
+
           <Library
             categories={categories}
             articles={articles}
             onSelectCategory={selectCategory}
             onSelectArticle={selectArticle}
           />
+
+
         )}
+
 
       </main>
 
-      <div
-        className="
-          sticky
-          bottom-0
-          z-50
-          shrink-0
-        "
-      >
-        <LearnBottomNavigation
-          view={view}
-          onOpenViewer={openViewer}
-          onOpenLibrary={openLibrary}
-        />
-      </div>
+
+      <LearnBottomNavigation
+
+        active={
+          isLibrary
+            ? "library"
+            : "articles"
+        }
+
+
+        onArticles={openArticles}
+
+
+        onLibrary={openLibrary}
+
+      />
+
 
     </div>
   );
+
 }

@@ -5,84 +5,297 @@ import { learnService } from "../services/learn.service";
 import type {
   LearnArticle,
   LearnCategory,
-  LearnView,
+  LearnNavigationState,
 } from "../types/learn.types";
 
 import type { UseLearn } from "../types/learn.hook.types";
 
+
 export function useLearn(): UseLearn {
-  const [view, setView] =
-    useState<LearnView>("viewer");
+
+  const latestArticle =
+    learnService.getLatestArticle();
+
+
+  const [history, setHistory] =
+    useState<LearnNavigationState[]>([
+      {
+        screen: "article",
+        articleId:
+          latestArticle?.id,
+        categoryId:
+          latestArticle?.categoryId,
+        source: "articles",
+      },
+    ]);
+
 
   const [selectedCategory, setSelectedCategory] =
-    useState<LearnCategory>();
+    useState<LearnCategory | undefined>();
+
 
   const [selectedArticle, setSelectedArticle] =
     useState<LearnArticle | undefined>(
-      learnService.getLatestArticle()
+      latestArticle
     );
 
-  function openLibrary() {
-    setView("library");
+
+
+  function push(
+    state: LearnNavigationState
+  ) {
+
+    setHistory((previous) => [
+      ...previous,
+      state,
+    ]);
+
   }
 
-  function openViewer() {
-    setView("viewer");
+
+
+  function restoreState(
+    state: LearnNavigationState
+  ) {
+
+    switch (state.screen) {
+
+
+      case "library":
+
+        setSelectedCategory(undefined);
+
+        setSelectedArticle(undefined);
+
+        break;
+
+
+
+      case "category":
+
+        if (state.categoryId) {
+
+          setSelectedCategory(
+            learnService.getCategory(
+              state.categoryId
+            )
+          );
+
+        }
+
+        setSelectedArticle(undefined);
+
+        break;
+
+
+
+      case "article":
+
+        if (state.categoryId) {
+
+          setSelectedCategory(
+            learnService.getCategory(
+              state.categoryId
+            )
+          );
+
+        }
+
+
+        if (state.articleId) {
+
+          setSelectedArticle(
+            learnService.getArticle(
+              state.articleId
+            )
+          );
+
+        }
+
+        break;
+
+
+
+      case "subcategory":
+
+        setSelectedArticle(undefined);
+
+        break;
+
+    }
+
   }
+
+
+
+  function goBack() {
+
+    setHistory((previous) => {
+
+      if (previous.length <= 1) {
+        return previous;
+      }
+
+
+      const next =
+        previous.slice(0, -1);
+
+
+      restoreState(
+        next[next.length - 1]
+      );
+
+
+      return next;
+
+    });
+
+  }
+
+
+
+  function reset() {
+
+    if (!latestArticle) {
+      return;
+    }
+
+
+    setHistory([
+      {
+        screen: "article",
+        articleId:
+          latestArticle.id,
+        categoryId:
+          latestArticle.categoryId,
+        source: "articles",
+      },
+    ]);
+
+
+    setSelectedCategory(undefined);
+
+
+    setSelectedArticle(
+      latestArticle
+    );
+
+  }
+
+
 
   function selectCategory(
     categoryId: string
   ) {
-    const category =
-      learnService.getCategory(categoryId);
 
-    setSelectedCategory(category);
+    const category =
+      learnService.getCategory(
+        categoryId
+      );
+
+
+    setSelectedCategory(
+      category
+    );
+
+
+    push({
+      screen: "category",
+      categoryId,
+      source: "library",
+    });
+
   }
+
+
 
   function clearCategory() {
+
     setSelectedCategory(undefined);
+
   }
+
+
 
   function selectArticle(
-    articleId: string
+    articleId: string,
+    source:
+      | "articles"
+      | "library" = "articles"
   ) {
+
     const article =
-      learnService.getArticle(articleId);
+      learnService.getArticle(
+        articleId
+      );
 
-    setSelectedArticle(article);
 
-    setView("viewer");
+    setSelectedArticle(
+      article
+    );
+
+
+    push({
+      screen: "article",
+      articleId,
+      categoryId:
+        article?.categoryId,
+      source,
+    });
+
   }
 
-  return {
-    view,
 
-    latestArticle:
-      learnService.getLatestArticle(),
+
+  return {
+
+    latestArticle,
+
 
     selectedArticle,
 
+
     selectedCategory,
+
 
     articles:
       learnService.getArticles(),
 
+
     categories:
       learnService.getCategories(),
 
-    openLibrary,
 
-    openViewer,
+    history,
+
+
+    canGoBack:
+      history.length > 1,
+
+
+    push,
+
+
+    goBack,
+
+
+    reset,
+
 
     selectCategory,
 
+
     clearCategory,
 
+
     selectArticle,
+
 
     searchArticles: (
       query: string
     ) =>
       learnService.searchArticles(query),
+
   };
+
 }

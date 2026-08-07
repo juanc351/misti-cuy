@@ -1,45 +1,90 @@
-import type { LearnBottomNavigationItemProps } from "./learn-navigation.types";
+"use client";
 
-export default function LearnBottomNavigationItem({
+import {
+  FileText,
+  BookOpen,
+} from "lucide-react";
+
+interface Props {
+  active: "articles" | "library";
+
+  onArticles: () => void;
+
+  onLibrary: () => void;
+}
+
+
+export const LEARN_BOTTOM_NAV_HEIGHT = 96;
+
+
+export default function LearnBottomNavigation({
   active,
-  label,
-  onClick,
-  children,
-}: LearnBottomNavigationItemProps) {
+  onArticles,
+  onLibrary,
+}: Props) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <nav
       className="
-        flex
-        flex-1
-        flex-col
-        items-center
-        justify-center
-        gap-2
-        py-4
-        transition-colors
+        fixed
+        bottom-0
+        left-0
+        right-0
+        z-50
+        h-24
+        border-t
+        border-white/10
+        bg-[#0A0A0A]
       "
     >
+
       <div
-        className={
-          active
-            ? "text-lime-400"
-            : "text-white"
-        }
+        className="
+          flex
+          h-full
+          items-center
+          justify-around
+        "
       >
-        {children}
+
+        <button
+          type="button"
+          onClick={onArticles}
+          className={
+            active === "articles"
+              ? "text-[#7CB342]"
+              : "text-white"
+          }
+        >
+          <FileText
+            size={34}
+          />
+
+          <span className="block text-sm">
+            Artículos
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          onClick={onLibrary}
+          className={
+            active === "library"
+              ? "text-[#7CB342]"
+              : "text-white"
+          }
+        >
+          <BookOpen
+            size={34}
+          />
+
+          <span className="block text-sm">
+            Biblioteca
+          </span>
+        </button>
+
       </div>
 
-      <span
-        className={
-          active
-            ? "text-lg font-medium text-lime-400"
-            : "text-lg font-medium text-white"
-        }
-      >
-        {label}
-      </span>
-    </button>
+    </nav>
   );
 }
