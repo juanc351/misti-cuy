@@ -56,6 +56,10 @@ export default function AprendeMobileLayout({
       "
     >
 
+      {/* =====================================
+          CONTENIDO
+      ====================================== */}
+
       <main
         className="
           relative
@@ -64,19 +68,21 @@ export default function AprendeMobileLayout({
         "
       >
 
-        {/* ==========================
-            LIBRARY
-        ========================== */}
+        {/* =====================================
+            BIBLIOTECA
+        ====================================== */}
 
         <div
           className={`
             absolute
             inset-0
             overflow-y-auto
+            transition-opacity
+            duration-300
             ${
               isLibrary
-                ? "block"
-                : "hidden"
+                ? "opacity-100 pointer-events-auto"
+                : "opacity-0 pointer-events-none"
             }
           `}
         >
@@ -90,19 +96,21 @@ export default function AprendeMobileLayout({
 
         </div>
 
-        {/* ==========================
-            ARTICLE
-        ========================== */}
+        {/* =====================================
+            ARTÍCULO
+        ====================================== */}
 
         <div
           className={`
             absolute
             inset-0
             overflow-y-auto
+            transition-opacity
+            duration-300
             ${
               isArticle
-                ? "block"
-                : "hidden"
+                ? "opacity-100 pointer-events-auto"
+                : "opacity-0 pointer-events-none"
             }
           `}
         >
@@ -119,7 +127,16 @@ export default function AprendeMobileLayout({
 
       </main>
 
-      <footer className="shrink-0">
+      {/* =====================================
+          NAVEGACIÓN INFERIOR
+      ====================================== */}
+
+      <footer
+        className="
+          shrink-0
+          z-50
+        "
+      >
 
         <LearnBottomNavigation
           active={
