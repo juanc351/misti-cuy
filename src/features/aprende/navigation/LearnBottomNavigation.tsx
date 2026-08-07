@@ -5,7 +5,6 @@ import {
   BookOpen,
 } from "lucide-react";
 
-
 interface Props {
   active: "articles" | "library";
 
@@ -14,9 +13,7 @@ interface Props {
   onLibrary: () => void;
 }
 
-
-export const LEARN_BOTTOM_NAV_HEIGHT = 96;
-
+export const LEARN_BOTTOM_NAV_HEIGHT = 56;
 
 export default function LearnBottomNavigation({
   active,
@@ -25,18 +22,13 @@ export default function LearnBottomNavigation({
 }: Props) {
 
   return (
+
     <nav
       className="
-        fixed
-        bottom-0
-        left-0
-        right-0
-        z-50
-        h-24
+        h-14
         border-t
         border-white/10
-        bg-[#0A0A0A]/95
-        backdrop-blur-xl
+        bg-[#050505]
       "
     >
 
@@ -58,6 +50,7 @@ export default function LearnBottomNavigation({
             flex
             flex-col
             items-center
+            justify-center
             gap-1
             transition-colors
             ${
@@ -68,15 +61,13 @@ export default function LearnBottomNavigation({
           `}
         >
 
-          <FileText size={34} />
+          <FileText size={20} />
 
-          <span className="text-sm">
+          <span className="text-xs">
             Artículos
           </span>
 
         </button>
-
-
 
         <button
           type="button"
@@ -85,6 +76,7 @@ export default function LearnBottomNavigation({
             flex
             flex-col
             items-center
+            justify-center
             gap-1
             transition-colors
             ${
@@ -95,17 +87,18 @@ export default function LearnBottomNavigation({
           `}
         >
 
-          <BookOpen size={34} />
+          <BookOpen size={20} />
 
-          <span className="text-sm">
+          <span className="text-xs">
             Biblioteca
           </span>
 
         </button>
 
-
       </div>
 
     </nav>
+
   );
+
 }

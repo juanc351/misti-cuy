@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 import type {
   LearnArticle,
 } from "../types/learn.types";
@@ -5,7 +9,6 @@ import type {
 import {
   ChevronRight,
 } from "lucide-react";
-
 
 interface Props {
 
@@ -17,6 +20,44 @@ interface Props {
 
 }
 
+/* =====================================
+   ANIMACIONES
+===================================== */
+
+const containerVariants = {
+
+  hidden: {},
+
+  show: {
+
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.10,
+    },
+
+  },
+
+};
+
+const itemVariants = {
+
+  hidden: {
+    opacity: 0,
+    y: 18,
+  },
+
+  show: {
+
+    opacity: 1,
+    y: 0,
+
+    transition: {
+      duration: 0.25,
+    },
+
+  },
+
+};
 
 export default function LibraryArticles({
 
@@ -26,17 +67,40 @@ export default function LibraryArticles({
 
 }: Props) {
 
-
   return (
 
-    <section className="mt-8 space-y-4">
+    <motion.section
 
+      variants={containerVariants}
+
+      initial="hidden"
+
+      animate="show"
+
+      className="
+        mt-8
+        space-y-3
+      "
+
+    >
 
       {articles.map((article) => (
 
-        <button
+        <motion.button
 
           key={article.id}
+
+          layout
+
+          variants={itemVariants}
+
+          whileTap={{
+            scale: 0.98,
+          }}
+
+          whileHover={{
+            scale: 1.01,
+          }}
 
           onClick={() =>
             onSelectArticle(
@@ -54,54 +118,89 @@ export default function LibraryArticles({
             border
             border-[#7CB342]
             bg-[#050505]
-            px-8
-            py-6
+            px-6
+            py-5
             text-left
-            transition-all
-            duration-300
-            hover:bg-[#111111]
           "
 
         >
 
+          {/* ==========================
+              INFORMACIÓN
+          ========================== */}
 
-          <h3
-
+          <div
             className="
-              text-xl
-              font-bold
-              text-white
+              min-w-0
+              flex-1
             "
+          >
+
+            <h3
+
+              className="
+                truncate
+                text-lg
+                font-semibold
+                text-white
+              "
+
+            >
+
+              {article.title}
+
+            </h3>
+
+            {/* =====================================
+                TODO (Backend)
+
+                Aquí se podrá mostrar:
+
+                • Nuevo
+                • Actualizado
+                • Leído
+                • Tiempo de lectura
+                • Fecha de actualización
+
+            ====================================== */}
+
+          </div>
+
+          {/* ==========================
+              FLECHA
+          ========================== */}
+
+          <motion.div
+
+            whileHover={{
+              x: 4,
+            }}
+
+            transition={{
+              duration: 0.20,
+            }}
 
           >
 
-            {article.title}
+            <ChevronRight
 
-          </h3>
+              size={24}
 
+              className="
+                ml-4
+                shrink-0
+                text-[#7CB342]
+              "
 
+            />
 
-          <ChevronRight
+          </motion.div>
 
-            size={32}
-
-            className="
-              text-[#7CB342]
-              transition-transform
-              duration-300
-              group-hover:translate-x-1
-            "
-
-          />
-
-
-        </button>
-
+        </motion.button>
 
       ))}
 
-
-    </section>
+    </motion.section>
 
   );
 

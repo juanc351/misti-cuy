@@ -1,27 +1,17 @@
 "use client";
 
-import {
-  motion,
-} from "framer-motion";
+import { motion } from "framer-motion";
 
-
-import {
-  getCategoryIcon,
-} from "./library-icons";
-
+import { getCategoryIcon } from "../library-icons";
 
 import type {
   LearnArticle,
   LearnCategory,
-} from "../types/learn.types";
+} from "../../types/learn.types";
 
-
-import LibraryArticles from "./LibraryArticles";
-
-
+import LibraryArticles from "../LibraryArticles";
 
 interface Props {
-
   category: LearnCategory;
 
   articles: LearnArticle[];
@@ -30,192 +20,138 @@ interface Props {
     id: string,
     source?: "articles" | "library"
   ) => void;
-
 }
 
-
-
-export default function LibraryCategoryViewer({
-
+export default function LibraryDesktopCategoryViewer({
   category,
-
   articles,
-
   onSelectArticle,
-
 }: Props) {
-
 
   return (
 
     <motion.section
 
-      layout
-
       initial={{
         opacity: 0,
-        y: 20,
       }}
 
       animate={{
         opacity: 1,
-        y: 0,
       }}
 
       exit={{
         opacity: 0,
-        y: -20,
       }}
 
       transition={{
-        duration: 0.35,
+        duration: 0.25,
       }}
 
       className="
         px-6
-        pt-8
-        pb-28
+        pt-6
+        pb-10
       "
 
     >
 
-
-      {/* CABECERA DE CATEGORIA */}
+      {/* ==========================
+          CABECERA
+      ========================== */}
 
       <motion.div
-
-        layoutId={`category-${category.id}`}
-
-        className="
-          mb-8
-        "
-
+        className="mb-8"
       >
 
-
         <div
-
           className="
             flex
-            items-start
-            gap-6
+            items-center
+            gap-4
           "
-
         >
-
 
           {/* ICONO */}
 
-          <motion.div
-
-            layoutId={`icon-${category.id}`}
-
+          <div
             className="
               flex
-              h-20
-              w-20
+              h-14
+              w-14
               shrink-0
               items-center
               justify-center
+              rounded-2xl
+              bg-[#7CB342]/10
               text-[#7CB342]
             "
-
           >
 
             {getCategoryIcon(
               category.icon,
-              58
+              34
             )}
-
-          </motion.div>
-
-
-
-          {/* TITULO */}
-
-          <div>
-
-
-            <h1
-
-              className="
-                text-4xl
-                font-bold
-                text-white
-              "
-
-            >
-
-              {category.name}
-
-            </h1>
-
-
-
-            <span
-
-              className="
-                mt-1
-                block
-                text-lg
-                text-gray-300
-              "
-
-            >
-
-              {articles.length} artículos
-
-            </span>
-
 
           </div>
 
+          {/* TITULO */}
+
+          <div className="min-w-0 flex-1">
+
+            <h1
+              className="
+                text-3xl
+                font-bold
+                text-white
+              "
+            >
+              {category.name}
+            </h1>
+
+            <span
+              className="
+                mt-1
+                block
+                text-base
+                text-gray-400
+              "
+            >
+              {articles.length} artículos
+            </span>
+
+          </div>
 
         </div>
 
-
-
-
-        {/* DESCRIPCION */}
+        {/* DESCRIPCIÓN */}
 
         <p
-
           className="
-            mt-6
-            max-w-3xl
-            text-lg
-            leading-8
+            mt-5
+            text-base
+            leading-7
             text-gray-300
           "
-
         >
-
           {category.description}
-
         </p>
-
 
       </motion.div>
 
-
-
-
-      {/* ARTICULOS */}
+      {/* ==========================
+          ARTÍCULOS
+      ========================== */}
 
       <LibraryArticles
-
         articles={articles}
-
-        onSelectArticle={
-          (id) =>
-            onSelectArticle(
-              id,
-              "library"
-            )
+        onSelectArticle={(id) =>
+          onSelectArticle(
+            id,
+            "library"
+          )
         }
-
       />
-
 
     </motion.section>
 

@@ -10,40 +10,43 @@ import type {
 
 import type { UseLearn } from "../types/learn.hook.types";
 
-
 export function useLearn(): UseLearn {
 
   const latestArticle =
     learnService.getLatestArticle();
 
-
   const [history, setHistory] =
     useState<LearnNavigationState[]>([
       {
         screen: "article",
-        articleId:
-          latestArticle?.id,
-        categoryId:
-          latestArticle?.categoryId,
+        articleId: latestArticle?.id,
+        categoryId: latestArticle?.categoryId,
         source: "articles",
       },
     ]);
 
-
   const [selectedCategory, setSelectedCategory] =
     useState<LearnCategory | undefined>();
-
 
   const [selectedArticle, setSelectedArticle] =
     useState<LearnArticle | undefined>(
       latestArticle
     );
 
+  // ==========================
+  // DEBUG
+  // ==========================
 
+  console.log("========== LEARN ==========");
+  console.log("history:", history);
+  console.log("selectedCategory:", selectedCategory);
+  console.log("selectedArticle:", selectedArticle);
 
   function push(
     state: LearnNavigationState
   ) {
+
+    console.log("PUSH:", state);
 
     setHistory((previous) => [
       ...previous,
@@ -52,24 +55,20 @@ export function useLearn(): UseLearn {
 
   }
 
-
-
   function restoreState(
     state: LearnNavigationState
   ) {
 
-    switch (state.screen) {
+    console.log("RESTORE:", state);
 
+    switch (state.screen) {
 
       case "library":
 
         setSelectedCategory(undefined);
-
         setSelectedArticle(undefined);
 
         break;
-
-
 
       case "category":
 
@@ -87,8 +86,6 @@ export function useLearn(): UseLearn {
 
         break;
 
-
-
       case "article":
 
         if (state.categoryId) {
@@ -100,7 +97,6 @@ export function useLearn(): UseLearn {
           );
 
         }
-
 
         if (state.articleId) {
 
@@ -114,8 +110,6 @@ export function useLearn(): UseLearn {
 
         break;
 
-
-
       case "subcategory":
 
         setSelectedArticle(undefined);
@@ -126,9 +120,9 @@ export function useLearn(): UseLearn {
 
   }
 
-
-
   function goBack() {
+
+    console.log("GO BACK");
 
     setHistory((previous) => {
 
@@ -136,15 +130,12 @@ export function useLearn(): UseLearn {
         return previous;
       }
 
-
       const next =
         previous.slice(0, -1);
-
 
       restoreState(
         next[next.length - 1]
       );
-
 
       return next;
 
@@ -152,29 +143,24 @@ export function useLearn(): UseLearn {
 
   }
 
-
-
   function reset() {
+
+    console.log("RESET");
 
     if (!latestArticle) {
       return;
     }
 
-
     setHistory([
       {
         screen: "article",
-        articleId:
-          latestArticle.id,
-        categoryId:
-          latestArticle.categoryId,
+        articleId: latestArticle.id,
+        categoryId: latestArticle.categoryId,
         source: "articles",
       },
     ]);
 
-
     setSelectedCategory(undefined);
-
 
     setSelectedArticle(
       latestArticle
@@ -182,22 +168,20 @@ export function useLearn(): UseLearn {
 
   }
 
-
-
   function selectCategory(
     categoryId: string
   ) {
+
+    console.log("SELECT CATEGORY:", categoryId);
 
     const category =
       learnService.getCategory(
         categoryId
       );
 
-
     setSelectedCategory(
       category
     );
-
 
     push({
       screen: "category",
@@ -207,15 +191,22 @@ export function useLearn(): UseLearn {
 
   }
 
-
-
   function clearCategory() {
+
+    console.log("CLEAR CATEGORY");
 
     setSelectedCategory(undefined);
 
+    setSelectedArticle(undefined);
+
+    setHistory([
+      {
+        screen: "library",
+        source: "library",
+      },
+    ]);
+
   }
-
-
 
   function selectArticle(
     articleId: string,
@@ -224,16 +215,16 @@ export function useLearn(): UseLearn {
       | "library" = "articles"
   ) {
 
+    console.log("SELECT ARTICLE:", articleId);
+
     const article =
       learnService.getArticle(
         articleId
       );
 
-
     setSelectedArticle(
       article
     );
-
 
     push({
       screen: "article",
@@ -245,51 +236,36 @@ export function useLearn(): UseLearn {
 
   }
 
-
-
   return {
 
     latestArticle,
 
-
     selectedArticle,
 
-
     selectedCategory,
-
 
     articles:
       learnService.getArticles(),
 
-
     categories:
       learnService.getCategories(),
 
-
     history,
-
 
     canGoBack:
       history.length > 1,
 
-
     push,
-
 
     goBack,
 
-
     reset,
-
 
     selectCategory,
 
-
     clearCategory,
 
-
     selectArticle,
-
 
     searchArticles: (
       query: string

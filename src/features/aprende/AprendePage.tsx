@@ -2,11 +2,8 @@
 
 import { useLearnContext } from "./LearnProvider";
 
-import Library from "./library/Library";
-import ArticleViewer from "./viewer/ArticleViewer";
-
-import LearnBottomNavigation from "./navigation/LearnBottomNavigation";
-
+import AprendeMobileLayout from "./layouts/AprendeMobileLayout";
+import AprendeDesktopLayout from "./layouts/AprendeDesktopLayout";
 
 export default function AprendePage() {
 
@@ -17,102 +14,72 @@ export default function AprendePage() {
     articles,
     selectCategory,
     selectArticle,
+    clearCategory,
     reset,
-    push,
   } = useLearnContext();
-
 
   const current =
     history[history.length - 1]?.screen;
 
-
-  const currentState =
-    history[history.length - 1];
-
-
   function openArticles() {
-
     reset();
-
   }
-
 
   function openLibrary() {
-
-    if (
-      currentState?.screen !== "library"
-    ) {
-
-      push({
-        screen: "library",
-        source: "library",
-      });
-
-    }
-
+    clearCategory();
   }
-
 
   const isArticle =
     current === "article" &&
-    selectedArticle;
-
+    !!selectedArticle;
 
   const isLibrary =
     current === "library" ||
     current === "category" ||
     current === "subcategory";
 
-
   return (
-    <div className="flex min-h-screen flex-col pb-24">
 
+    <>
 
-      <main className="flex-1">
+      {/* ============================
+          MOBILE
+      ============================ */}
 
+      <div className="block lg:hidden h-full">
 
-        {isArticle ? (
+        <AprendeMobileLayout
+          isArticle={isArticle}
+          isLibrary={isLibrary}
+          selectedArticle={selectedArticle}
+          categories={categories}
+          articles={articles}
+          onSelectCategory={selectCategory}
+          onSelectArticle={selectArticle}
+          onArticles={openArticles}
+          onLibrary={openLibrary}
+        />
 
-          <ArticleViewer
-            article={selectedArticle}
-          />
+      </div>
 
+      {/* ============================
+          DESKTOP
+      ============================ */}
 
-        ) : (
+      <div className="hidden lg:block h-full">
 
+        <AprendeDesktopLayout
+          selectedArticle={selectedArticle}
+          categories={categories}
+          articles={articles}
+          onSelectCategory={selectCategory}
+          onSelectArticle={selectArticle}
+        />
 
-          <Library
-            categories={categories}
-            articles={articles}
-            onSelectCategory={selectCategory}
-            onSelectArticle={selectArticle}
-          />
+      </div>
 
+    </>
 
-        )}
-
-
-      </main>
-
-
-      <LearnBottomNavigation
-
-        active={
-          isLibrary
-            ? "library"
-            : "articles"
-        }
-
-
-        onArticles={openArticles}
-
-
-        onLibrary={openLibrary}
-
-      />
-
-
-    </div>
   );
 
 }

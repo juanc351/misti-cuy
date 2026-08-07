@@ -4,11 +4,11 @@ import { ChevronRight } from "lucide-react";
 
 import { motion } from "framer-motion";
 
-import { getCategoryIcon } from "./library-icons";
+import { getCategoryIcon } from "../library-icons";
 
 import type {
   LearnCategory,
-} from "../types/learn.types";
+} from "../../types/learn.types";
 
 interface Props {
   categories: LearnCategory[];
@@ -18,12 +18,14 @@ interface Props {
   ) => void;
 }
 
-export default function LibraryCategories({
+export default function LibraryDesktopCategories({
   categories,
   onSelectCategory,
 }: Props) {
+
   return (
-    <section className="mt-10">
+
+    <>
 
       <motion.h2
         layout
@@ -32,34 +34,42 @@ export default function LibraryCategories({
         Explora por categorías
       </motion.h2>
 
-
       <div className="space-y-4">
 
         {categories.map((category, index) => (
 
           <motion.button
+
             key={category.id}
+
             layoutId={`category-${category.id}`}
+
             initial={{
               opacity: 0,
               y: 20,
             }}
+
             animate={{
               opacity: 1,
               y: 0,
             }}
+
             transition={{
               delay: index * 0.05,
             }}
+
             whileHover={{
               scale: 1.01,
             }}
+
             whileTap={{
               scale: 0.98,
             }}
+
             onClick={() =>
               onSelectCategory(category.id)
             }
+
             className="
               group
               flex
@@ -75,10 +85,13 @@ export default function LibraryCategories({
               duration-300
               hover:bg-[#121212]
             "
+
           >
 
             <motion.div
+
               layoutId={`icon-${category.id}`}
+
               className="
                 flex
                 h-16
@@ -88,13 +101,15 @@ export default function LibraryCategories({
                 justify-center
                 text-[#7CB342]
               "
+
             >
+
               {getCategoryIcon(
                 category.icon,
                 42
               )}
-            </motion.div>
 
+            </motion.div>
 
             <div
               className="
@@ -114,7 +129,6 @@ export default function LibraryCategories({
                 {category.name}
               </motion.h3>
 
-
               <motion.div
                 layout
                 className="
@@ -133,7 +147,6 @@ export default function LibraryCategories({
 
             </div>
 
-
             <div
               className="
                 ml-6
@@ -143,6 +156,7 @@ export default function LibraryCategories({
                 text-[#7CB342]
               "
             >
+
               <ChevronRight
                 size={30}
                 className="
@@ -151,8 +165,8 @@ export default function LibraryCategories({
                   group-hover:translate-x-1
                 "
               />
-            </div>
 
+            </div>
 
           </motion.button>
 
@@ -160,6 +174,8 @@ export default function LibraryCategories({
 
       </div>
 
-    </section>
+    </>
+
   );
+
 }

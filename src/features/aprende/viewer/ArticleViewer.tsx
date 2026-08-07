@@ -1,3 +1,5 @@
+"use client";
+
 import type { LearnArticle } from "../types/learn.types";
 
 interface ArticleViewerProps {
@@ -7,23 +9,62 @@ interface ArticleViewerProps {
 export default function ArticleViewer({
   article,
 }: ArticleViewerProps) {
-  return (
-    <main>
-      <section className="mx-auto max-w-5xl p-6">
 
-        <h1 className="mb-4 text-5xl font-bold">
+  return (
+
+    <section
+      className="
+        bg-[#050505]
+      "
+    >
+
+      <div
+        className="
+          mx-auto
+          w-full
+          max-w-5xl
+          px-6
+          py-8
+        "
+      >
+
+        {/* =====================================
+            TÍTULO
+        ====================================== */}
+
+        <h1
+          className="
+            text-3xl
+            font-bold
+            leading-tight
+            text-white
+          "
+        >
           {article.title}
         </h1>
 
+        {/* =====================================
+            RESUMEN
+        ====================================== */}
 
-        <p className="mb-10 text-xl text-gray-400">
+        <p
+          className="
+            mt-5
+            text-base
+            leading-7
+            text-gray-400
+          "
+        >
           {article.summary}
         </p>
 
+        {/* =====================================
+            IMAGEN PRINCIPAL
+        ====================================== */}
 
         <div
           className="
-            mb-10
+            mt-8
             aspect-video
             w-full
             rounded-3xl
@@ -31,41 +72,60 @@ export default function ArticleViewer({
           "
         />
 
+        {/* =====================================
+            CONTENIDO
+        ====================================== */}
 
-        <article className="space-y-8">
+        <article
+          className="
+            mt-10
+            space-y-8
+          "
+        >
 
           {article.blocks.map((block) => {
 
             switch (block.type) {
 
               case "heading":
+
                 return (
+
                   <h2
                     key={block.id}
-                    className="text-3xl font-bold"
+                    className="
+                      text-2xl
+                      font-bold
+                      leading-tight
+                      text-white
+                    "
                   >
                     {block.content as string}
                   </h2>
+
                 );
 
-
               case "paragraph":
+
                 return (
+
                   <p
                     key={block.id}
                     className="
-                      text-lg
+                      text-base
                       leading-8
                       text-gray-300
                     "
                   >
                     {block.content as string}
                   </p>
+
                 );
 
-
               case "image":
+
                 return (
+
                   <div
                     key={block.id}
                     className="
@@ -75,18 +135,23 @@ export default function ArticleViewer({
                       bg-neutral-800
                     "
                   />
+
                 );
 
-
               default:
+
                 return null;
+
             }
 
           })}
 
         </article>
 
-      </section>
-    </main>
+      </div>
+
+    </section>
+
   );
+
 }
