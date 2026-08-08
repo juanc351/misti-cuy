@@ -44,18 +44,17 @@ export default function AprendeMobileLayout({
   onArticles,
   onLibrary,
 }: Props) {
-
   return (
-
     <div
       className="
         flex
-        h-screen
+        h-[100dvh]
+        min-h-0
         flex-col
+        overflow-hidden
         bg-[#050505]
       "
     >
-
       {/* =====================================
           CONTENIDO
       ====================================== */}
@@ -63,11 +62,11 @@ export default function AprendeMobileLayout({
       <main
         className="
           relative
+          min-h-0
           flex-1
           overflow-hidden
         "
       >
-
         {/* =====================================
             BIBLIOTECA
         ====================================== */}
@@ -76,24 +75,24 @@ export default function AprendeMobileLayout({
           className={`
             absolute
             inset-0
+            min-h-0
             overflow-y-auto
+            overscroll-contain
             transition-opacity
             duration-300
             ${
               isLibrary
-                ? "opacity-100 pointer-events-auto"
-                : "opacity-0 pointer-events-none"
+                ? "pointer-events-auto opacity-100"
+                : "pointer-events-none opacity-0"
             }
           `}
         >
-
           <LibraryMobile
             categories={categories}
             articles={articles}
             onSelectCategory={onSelectCategory}
             onSelectArticle={onSelectArticle}
           />
-
         </div>
 
         {/* =====================================
@@ -104,40 +103,43 @@ export default function AprendeMobileLayout({
           className={`
             absolute
             inset-0
+            min-h-0
             overflow-y-auto
+            overscroll-contain
             transition-opacity
             duration-300
             ${
               isArticle
-                ? "opacity-100 pointer-events-auto"
-                : "opacity-0 pointer-events-none"
+                ? "pointer-events-auto opacity-100"
+                : "pointer-events-none opacity-0"
             }
           `}
         >
-
           {selectedArticle && (
-
             <ArticleViewer
               article={selectedArticle}
             />
-
           )}
-
         </div>
-
       </main>
 
       {/* =====================================
           NAVEGACIÓN INFERIOR
+          
+          Permanece fuera del área de scroll.
+          El contenido se adapta al viewport
+          dinámico del navegador móvil.
       ====================================== */}
 
       <footer
         className="
-          shrink-0
+          relative
           z-50
+          shrink-0
+          bg-[#050505]
+          pb-[env(safe-area-inset-bottom)]
         "
       >
-
         <LearnBottomNavigation
           active={
             isLibrary
@@ -147,11 +149,7 @@ export default function AprendeMobileLayout({
           onArticles={onArticles}
           onLibrary={onLibrary}
         />
-
       </footer>
-
     </div>
-
   );
-
 }
