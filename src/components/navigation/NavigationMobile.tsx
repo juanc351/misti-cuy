@@ -26,9 +26,48 @@ export default function NavigationMobile() {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 lg:hidden">
-        <div className="mx-3 mt-3 rounded-full border border-white/10 bg-black/20 backdrop-blur-xl">
-          <div className="grid h-14 grid-cols-3 items-center px-2">
+      {/* =====================================
+          BARRA SUPERIOR MOBILE
+
+          Degradado negro tenue.
+          Sin blur.
+          Se desvanece hacia abajo.
+      ====================================== */}
+
+      <header
+        className="
+          fixed
+          left-0
+          right-0
+          top-0
+          z-50
+          lg:hidden
+          bg-gradient-to-b
+          from-black/45
+          via-black/25
+          to-transparent
+        "
+      >
+        <div
+          className="
+            grid
+            h-16
+            grid-cols-[1fr_auto_1fr]
+            items-center
+            px-3
+          "
+        >
+          {/* =================================
+              BOTÓN VOLVER
+          ================================= */}
+
+          <div
+            className="
+              flex
+              items-center
+              justify-start
+            "
+          >
             <NavigationBackButton
               visible={
                 showBackButton &&
@@ -36,19 +75,57 @@ export default function NavigationMobile() {
               }
               onClick={goBack}
             />
-
-            <div className="justify-self-center">
-              <span className="text-sm font-semibold text-white/90">
-                {currentPageTitle}
-              </span>
-            </div>
-
-            <div className="h-10 w-10" />
           </div>
+
+          {/* =================================
+              TÍTULO
+          ================================= */}
+
+          <div
+            className="
+              flex
+              items-center
+              justify-center
+            "
+          >
+            <span
+              className="
+                text-sm
+                font-semibold
+                text-white/90
+              "
+            >
+              {currentPageTitle}
+            </span>
+          </div>
+
+          {/* =================================
+              ESPACIO RESERVADO
+              PARA EL MENÚ
+          ================================= */}
+
+          <div
+            className="
+              h-10
+              w-10
+            "
+          />
         </div>
       </header>
 
-      <div className="fixed right-3 top-3 z-[60] lg:hidden">
+      {/* =====================================
+          BOTÓN / MENÚ PRINCIPAL MOBILE
+      ====================================== */}
+
+      <div
+        className="
+          fixed
+          right-3
+          top-1
+          z-[60]
+          lg:hidden
+        "
+      >
         <AnimatedMenuButton />
       </div>
     </>
