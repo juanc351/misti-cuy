@@ -32,7 +32,7 @@ export default function CuyCard({ card }: CuyCardProps) {
         duration: 0.8,
         ease: easing,
       }}
-      className="group relative overflow-hidden rounded-[2rem] border border-primary/20 bg-black"
+      className="group relative overflow-hidden rounded-[2rem] border border-primary/20 border-[#7CB342]"
     >
       {/* Imagen */}
       <motion.div

@@ -29,11 +29,11 @@ export interface CuyInventoryItem {
    * Presentación comercial.
    *
    * Ejemplos:
-   * 500 g
-   * 700 g
-   * 900 g
-   * 1 kg
-   * 1.2 kg
+   * - 500 g
+   * - 700 g
+   * - 900 g
+   * - 1 kg
+   * - 1.2 kg
    */
   presentation?: string;
 
@@ -92,6 +92,18 @@ export const cuyInventory: CuyInventoryItem[] = [
     status: CuyAvailabilityStatus.DISPONIBLE,
     males: 6,
     females: 9,
+    ageRange: "4 - 5 meses",
+    updatedAt: "Hoy",
+  },
+
+  {
+    id: "inventory-004",
+    category: CuyCategoryType.REPRODUCTOR,
+    variantId: "variant-kuri",
+    cityId: "city-arequipa",
+    status: CuyAvailabilityStatus.DISPONIBLE,
+    males: 4,
+    females: 8,
     ageRange: "4 - 5 meses",
     updatedAt: "Hoy",
   },

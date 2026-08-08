@@ -4,8 +4,6 @@ import Footer from "@/components/footer/Footer";
 
 import { useCuy } from "./hooks/useCuy";
 
-import CuyHero from "./components/hero/CuyHero";
-
 import CuyCategorySelector from "./components/controls/CuyCategorySelector";
 import CuyCitySelector from "./components/controls/CuyCitySelector";
 
@@ -23,10 +21,7 @@ export default function MisCuyesPage() {
   const catalog = useCuy();
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-8">
-      {/* Hero */}
-      <CuyHero />
-
+    <div>
       {/* Resumen */}
       <CuyAvailabilitySummary catalog={catalog} />
 

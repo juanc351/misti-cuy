@@ -8,7 +8,7 @@ export default async function MisCuyesPage() {
     <>
       <Navigation />
 
-      <main className="min-h-screen bg-[#0A0A0A] pt-[126px] text-white">
+      <main className="min-h-screen bg-[#0A0A0A] pt-[126px] text-slate-900">
         <MisCuyesModule />
       </main>
     </>

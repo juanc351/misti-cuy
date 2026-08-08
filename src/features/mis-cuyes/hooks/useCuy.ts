@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { useState } from "react";
 
 import { cuyService } from "../services/cuy.service";
 
@@ -7,41 +9,70 @@ import type {
   CuyCity,
   CuyProduct,
   CuyVariant,
-  CuyCategoryType,
 } from "../types/cuy.types";
 
-import type { CuyInventoryItem } from "../data/cuy.inventory";
-
 import { CuyCategoryType as CategoryType } from "../types/cuy.types";
+
+import type { CuyInventoryItem } from "../data/cuy.inventory";
 
 import type { UseCuyReturn } from "../types/cuy.hook.types";
 
 export function useCuy(): UseCuyReturn {
-  const [products, setProducts] = useState<CuyProduct[]>([]);
-  const [categories, setCategories] = useState<CuyCategory[]>([]);
-  const [variants, setVariants] = useState<CuyVariant[]>([]);
-  const [cities, setCities] = useState<CuyCity[]>([]);
-  const [inventory, setInventory] = useState<CuyInventoryItem[]>([]);
+  /* =====================================
+     DATOS
+     
+     El servicio ya devuelve los datos
+     sincrónicamente, por lo que no
+     necesitamos copiarlos a estados.
+  ====================================== */
 
-  const [loading, setLoading] = useState(true);
-  const [error] = useState<string | null>(null);
+  const products: CuyProduct[] =
+    cuyService.getCuyProducts();
 
-  const [selectedCategory, setCategory] = useState<string | null>(
-    CategoryType.REPRODUCTOR
-  );
+  const categories: CuyCategory[] =
+    cuyService.getCuyCategories();
 
-  const [selectedCity, setCity] = useState<string | null>(
-    "city-arequipa"
-  );
+  const variants: CuyVariant[] =
+    cuyService.getCuyVariants();
 
-  /**
+  const cities: CuyCity[] =
+    cuyService.getCuyCities();
+
+  const inventory: CuyInventoryItem[] =
+    cuyService.getCuyInventory();
+
+  /* =====================================
+     ESTADO DE CARGA
+
+     Los datos son locales y sincrónicos.
+     No existe una carga asíncrona.
+  ====================================== */
+
+  const loading = false;
+
+  const error: string | null = null;
+
+  /* =====================================
+     FILTROS
+  ====================================== */
+
+  const [selectedCategory, setCategory] =
+    useState<string | null>(
+      CategoryType.REPRODUCTOR
+    );
+
+  const [selectedCity, setCity] =
+    useState<string | null>(
+      "city-arequipa"
+    );
+
+  /*
    * Solo reproductores.
    */
-  const [selectedVariant, setVariant] = useState<string | null>(
-    null
-  );
+  const [selectedVariant, setVariant] =
+    useState<string | null>(null);
 
-  /**
+  /*
    * Solo consumo.
    */
   const [selectedPresentation, setPresentation] =
@@ -49,18 +80,14 @@ export function useCuy(): UseCuyReturn {
 
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    setProducts(cuyService.getCuyProducts());
-    setCategories(cuyService.getCuyCategories());
-    setVariants(cuyService.getCuyVariants());
-    setCities(cuyService.getCuyCities());
-    setInventory(cuyService.getCuyInventory());
-
-    setLoading(false);
-  }, []);
+  /* =====================================
+     LIMPIAR FILTROS
+  ====================================== */
 
   const clearFilters = () => {
-    setCategory(CategoryType.REPRODUCTOR);
+    setCategory(
+      CategoryType.REPRODUCTOR
+    );
 
     setCity("city-arequipa");
 
@@ -70,6 +97,10 @@ export function useCuy(): UseCuyReturn {
 
     setSearch("");
   };
+
+  /* =====================================
+     RETURN
+  ====================================== */
 
   return {
     data: {

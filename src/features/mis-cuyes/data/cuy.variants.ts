@@ -45,4 +45,11 @@ export const cuyVariants: CuyVariant[] = [
     isActive: true,
     order: 6,
   },
+    {
+    id: "variant-consumo",
+    name: "Consumo",
+    type: CuyVariantType.HIBRIDO,
+    isActive: true,
+    order: 7,
+  },
 ];
