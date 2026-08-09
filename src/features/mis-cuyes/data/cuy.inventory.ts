@@ -115,7 +115,7 @@ export const cuyInventory: CuyInventoryItem[] = [
   {
     id: "inventory-101",
     category: CuyCategoryType.CONSUMO,
-    variantId: "variant-peru",
+    variantId: "variant-consumo",
     cityId: "city-arequipa",
     status: CuyAvailabilityStatus.DISPONIBLE,
     quantity: 85,
@@ -127,7 +127,7 @@ export const cuyInventory: CuyInventoryItem[] = [
   {
     id: "inventory-102",
     category: CuyCategoryType.CONSUMO,
-    variantId: "variant-andina",
+    variantId: "variant-consumo",
     cityId: "city-arequipa",
     status: CuyAvailabilityStatus.DISPONIBLE,
     quantity: 52,
@@ -139,7 +139,7 @@ export const cuyInventory: CuyInventoryItem[] = [
   {
     id: "inventory-103",
     category: CuyCategoryType.CONSUMO,
-    variantId: "variant-inti",
+    variantId: "variant-consumo",
     cityId: "city-arequipa",
     status: CuyAvailabilityStatus.DISPONIBLE,
     quantity: 36,

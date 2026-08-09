@@ -19,7 +19,18 @@ export default function CuyAvailabilitySummary({
     filters.selectedCategory === CuyCategoryType.CONSUMO;
 
   return (
-    <section>
+    <section
+      className="
+        w-full
+        rounded-2xl
+        border
+        border-[#292929]
+        bg-[#11110F]
+        px-4
+        py-4
+        text-[#F5F5F5]
+      "
+    >
       {isConsumption ? (
         <SummaryConsumptionCarousel catalog={catalog} />
       ) : (

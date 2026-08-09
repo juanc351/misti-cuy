@@ -35,25 +35,20 @@ export default function SummaryConsumptionCarousel({
   /**
    * Referencia al contenedor horizontal.
    */
-  const carouselRef =
-    useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   /**
    * Construcción de las tarjetas.
-   *
-   * Los datos de cantidad y presentación
-   * vienen directamente del inventario.
    */
   const cards = inventory
     .filter(
       (item) =>
-        item.category ===
-          CuyCategoryType.CONSUMO &&
-        item.cityId === filters.selectedCity,
+        item.category === CuyCategoryType.CONSUMO &&
+        item.cityId === filters.selectedCity
     )
     .map((item) => {
       const variant = variants.find(
-        (v) => v.id === item.variantId,
+        (v) => v.id === item.variantId
       );
 
       return {
@@ -71,7 +66,7 @@ export default function SummaryConsumptionCarousel({
    * Movimiento horizontal del slider.
    */
   const scroll = (
-    direction: "left" | "right",
+    direction: "left" | "right"
   ) => {
     carouselRef.current?.scrollBy({
       left:
@@ -83,23 +78,13 @@ export default function SummaryConsumptionCarousel({
   };
 
   return (
-    <section
-      className="
-        w-full
-        max-w-full
-        overflow-hidden
-        rounded-2xl
-        bg-white
-        p-5
-        shadow-sm
-      "
-    >
+    <section className="w-full bg-[#11110F] text-[#F5F5F5]">
       {/* =====================================
           ENCABEZADO
       ====================================== */}
 
       <div className="mb-4">
-        <h2 className="text-sm font-semibold text-slate-900">
+        <h2 className="text-sm font-semibold text-[#F5F5F5]">
           Resumen de disponibilidad para consumo
         </h2>
       </div>
@@ -138,13 +123,13 @@ export default function SummaryConsumptionCarousel({
             justify-center
             rounded-full
             border
-            border-slate-200
-            bg-white
-            text-slate-700
+            border-[#292929]
+            bg-[#0D0D0D]
+            text-[#B8B8B8]
             shadow-sm
             transition-all
-            hover:border-[#7CB342]
-            hover:text-[#7CB342]
+            hover:border-[#5FAF32]
+            hover:text-[#5FAF32]
             md:flex
           "
         >
@@ -181,28 +166,39 @@ export default function SummaryConsumptionCarousel({
                 type="button"
                 onClick={() =>
                   actions.setPresentation(
-                    card.presentation,
+                    card.presentation
                   )
                 }
                 className={`
                   group
                   flex
                   h-[82px]
-                  w-[250px]
+                  w-max
                   shrink-0
                   items-center
                   gap-3
                   rounded-xl
                   border
-                  bg-white
                   px-3
                   text-left
                   transition-all
                   duration-200
+
                   ${
                     active
-                      ? "border-[#7CB342] ring-1 ring-[#7CB342]/30 shadow-sm"
-                      : "border-slate-200 hover:border-[#7CB342]/50 hover:shadow-sm"
+                      ? `
+                        border-[#5FAF32]
+                        bg-[#0D0D0D]
+                        ring-1
+                        ring-[#5FAF32]/30
+                        shadow-sm
+                      `
+                      : `
+                        border-[#292929]
+                        bg-[#0D0D0D]
+                        hover:border-[#5FAF32]/60
+                        hover:bg-[#5FAF32]/10
+                      `
                   }
                 `}
               >
@@ -218,7 +214,7 @@ export default function SummaryConsumptionCarousel({
                     shrink-0
                     overflow-hidden
                     rounded-lg
-                    bg-slate-50
+                    bg-[#11110F]
                   "
                 >
                   <Image
@@ -240,15 +236,36 @@ export default function SummaryConsumptionCarousel({
                 ================================== */}
 
                 <div className="min-w-0">
-                  <h3 className="truncate text-sm font-bold text-slate-900">
+                  <h3
+                    className="
+                      truncate
+                      text-sm
+                      font-bold
+                      text-[#F5F5F5]
+                    "
+                  >
                     {card.variantName}
                   </h3>
 
-                  <p className="mt-0.5 text-2xl font-bold leading-none text-[#166534]">
+                  <p
+                    className="
+                      mt-0.5
+                      text-2xl
+                      font-bold
+                      leading-none
+                      text-[#5FAF32]
+                    "
+                  >
                     {card.presentation}
                   </p>
 
-                  <p className="mt-0.5 text-[11px] text-slate-500">
+                  <p
+                    className="
+                      mt-0.5
+                      text-[11px]
+                      text-[#B8B8B8]
+                    "
+                  >
                     {card.total} disponibles
                   </p>
                 </div>
@@ -278,13 +295,13 @@ export default function SummaryConsumptionCarousel({
             justify-center
             rounded-full
             border
-            border-slate-200
-            bg-white
-            text-slate-700
+            border-[#292929]
+            bg-[#0D0D0D]
+            text-[#B8B8B8]
             shadow-sm
             transition-all
-            hover:border-[#7CB342]
-            hover:text-[#7CB342]
+            hover:border-[#5FAF32]
+            hover:text-[#5FAF32]
             md:flex
           "
         >

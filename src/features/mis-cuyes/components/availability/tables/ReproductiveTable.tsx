@@ -13,7 +13,32 @@ export default function ReproductiveTable({
   const {
     data: { inventory, variants, cities },
     filters,
+    actions,
   } = catalog;
+
+  // ======================================================
+  // NAVEGAR A INFORMACIÓN DE LA LÍNEA
+  // ======================================================
+
+  const goToVarietyInfo = (variantId: string) => {
+    // Selecciona la línea genética
+    actions.setVariant(variantId);
+
+    // Esperamos la actualización de la selección
+    // antes de realizar el desplazamiento.
+    requestAnimationFrame(() => {
+      document
+        .getElementById("informacion-cuy")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    });
+  };
+
+  // ======================================================
+  // CONSTRUCCIÓN DE FILAS
+  // ======================================================
 
   const rows = inventory
     .filter(
@@ -32,10 +57,13 @@ export default function ReproductiveTable({
 
       return {
         id: item.id,
+        variantId: item.variantId,
         variety: variant?.name ?? "-",
         males: item.males ?? 0,
         females: item.females ?? 0,
-        total: (item.males ?? 0) + (item.females ?? 0),
+        total:
+          (item.males ?? 0) +
+          (item.females ?? 0),
         age: item.ageRange ?? "-",
         city: city?.name ?? "-",
         updatedAt: item.updatedAt,
@@ -43,82 +71,296 @@ export default function ReproductiveTable({
     });
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-200 px-6 py-4">
-        <h3 className="text-lg font-semibold text-slate-900">
-          Disponibilidad de Reproductores
-        </h3>
+    <section className="bg-[#0D0D0D]">
+      {/* ======================================================
+          ENCABEZADO
+      ====================================================== */}
 
-        <p className="mt-1 text-sm text-slate-500">
+      <div className="px-4 py-5 md:px-6">
+        <h2 className="text-lg font-bold text-[#F5F5F5]">
+          Disponibilidad de Reproductores
+        </h2>
+
+        <p className="mt-1 text-sm text-[#B8B8B8]">
           Información actualizada de reproductores disponibles.
         </p>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-slate-50">
+      {/* ======================================================
+          TABLA
+      ====================================================== */}
+
+      <div
+        className="
+          overflow-x-auto
+          rounded-xl
+          border
+          border-[#292929]
+        "
+      >
+        <table
+          className="
+            min-w-full
+            border-collapse
+            text-[#F5F5F5]
+          "
+        >
+          {/* ==================================================
+              ENCABEZADO DE LA TABLA
+          ================================================== */}
+
+          <thead className="bg-[#5FAF32]">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-left
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Variedad
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Machos
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Hembras
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Total
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Edad
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Ciudad
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold">
+              <th
+                className="
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Actualizado
               </th>
             </tr>
           </thead>
 
+          {/* ==================================================
+              DATOS
+          ================================================== */}
+
           <tbody>
             {rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-t border-slate-100 transition-colors hover:bg-slate-50"
+                onClick={() =>
+                  goToVarietyInfo(row.variantId)
+                }
+                className="
+                  group
+                  cursor-pointer
+                  border-t
+                  border-[#292929]
+                  bg-[#0D0D0D]
+                  text-[#F5F5F5]
+                  transition-colors
+                  duration-200
+                  hover:bg-[#5FAF32]/10
+                "
               >
-                <td className="px-6 py-4 font-medium">
+                {/* VARIEDAD */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    font-medium
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.variety}
                 </td>
 
-                <td className="px-6 py-4 text-center">
+                {/* MACHOS */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.males}
                 </td>
 
-                <td className="px-6 py-4 text-center">
+                {/* HEMBRAS */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.females}
                 </td>
 
-                <td className="px-6 py-4 text-center font-semibold">
+                {/* TOTAL */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    font-semibold
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.total}
                 </td>
 
-                <td className="px-6 py-4 text-center">
+                {/* EDAD */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.age}
                 </td>
 
-                <td className="px-6 py-4 text-center">
+                {/* CIUDAD */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.city}
                 </td>
 
-                <td className="px-6 py-4 text-center text-slate-500">
+                {/* ACTUALIZADO */}
+
+                <td
+                  className="
+                    px-6
+                    py-4
+                    text-center
+                    text-[#B8B8B8]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.updatedAt}
                 </td>
               </tr>
@@ -126,6 +368,6 @@ export default function ReproductiveTable({
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 }

@@ -24,31 +24,61 @@ export default function CuyCategorySelector({
   const { filters, actions } = catalog;
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-5">
-        <h2 className="text-lg font-semibold text-slate-900">
+    <section className="bg-[#0D0D0D]">
+      {/* =====================================
+          ENCABEZADO
+      ====================================== */}
+
+      <div className="px-4 py-4">
+        <h2 className="text-sm font-semibold text-[#F5F5F5]">
           Categoría
         </h2>
 
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-[#B8B8B8]">
           Selecciona el tipo de cuyes que deseas consultar.
         </p>
       </div>
 
-      <div className="flex rounded-xl border border-slate-300 bg-slate-100 p-1">
+      {/* =====================================
+          SELECTOR
+      ====================================== */}
+
+      <div
+        className="
+          flex
+          rounded-xl
+          border
+          border-[#292929]
+          bg-[#11110F]
+          p-1
+        "
+      >
         {categories.map((category) => {
-          const active = filters.selectedCategory === category.id;
+          const active =
+            filters.selectedCategory === category.id;
 
           return (
             <button
               key={category.id}
               type="button"
-              onClick={() => actions.setCategory(category.id)}
-              className={`flex-1 rounded-lg px-5 py-3 text-sm font-semibold transition-all duration-200 ${
-                active
-                  ? "bg-emerald-600 text-white shadow"
-                  : "text-slate-700 hover:bg-white"
-              }`}
+              onClick={() =>
+                actions.setCategory(category.id)
+              }
+              className={`
+                flex-1
+                rounded-lg
+                px-5
+                py-3
+                text-sm
+                font-semibold
+                transition-all
+                duration-200
+                ${
+                  active
+                    ? "bg-[#5FAF32] text-white shadow-sm"
+                    : "text-[#B8B8B8] hover:bg-[#5FAF32]/10 hover:text-[#F5F5F5]"
+                }
+              `}
             >
               {category.label}
             </button>

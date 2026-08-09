@@ -13,7 +13,31 @@ export default function ConsumptionTable({
   const {
     data: { inventory, variants, cities },
     filters,
+    actions,
   } = catalog;
+
+  // ======================================================
+  // NAVEGAR A INFORMACIÓN DE LA PRESENTACIÓN
+  // ======================================================
+
+  const goToPresentationInfo = (
+    presentation: string
+  ) => {
+    actions.setPresentation(presentation);
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById("informacion-cuy")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    });
+  };
+
+  // ======================================================
+  // CONSTRUCCIÓN DE FILAS
+  // ======================================================
 
   const rows = inventory
     .filter(
@@ -32,94 +56,322 @@ export default function ConsumptionTable({
 
       return {
         id: item.id,
+
         variety: variant?.name ?? "-",
+
         quantity: item.quantity ?? 0,
+
         weight: item.averageWeight
           ? `${item.averageWeight} g`
           : "-",
-        age: item.ageRange ?? "-",
-        city: city?.name ?? "-",
+
+        presentation:
+          item.presentation ??
+          `${item.averageWeight ?? "-"} g`,
+
+        department: city?.department ?? "-",
+
         updatedAt: item.updatedAt,
+
+        whatsapp: city?.whatsapp ?? "",
       };
     });
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white text-black">
-      {/* =====================================
+    <section className="bg-[#0D0D0D]">
+      {/* ======================================================
           ENCABEZADO
-      ====================================== */}
+      ====================================================== */}
 
-      <div className="px-6 py-5">
-        <h2 className="text-lg font-bold text-black">
+      <div className="px-4 py-5 md:px-6">
+        <h2 className="text-lg font-bold text-[#F5F5F5]">
           Disponibilidad para Consumo
         </h2>
 
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-[#B8B8B8]">
           Información actualizada de cuyes para consumo.
         </p>
       </div>
 
-      {/* =====================================
+      {/* ======================================================
           TABLA
-      ====================================== */}
+      ====================================================== */}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-black">
-          <thead className="bg-slate-50 text-black">
+      <div
+        className="
+          overflow-x-auto
+          border
+          border-[#292929]
+          rounded-xl
+        "
+      >
+        <table
+          className="
+            min-w-full
+            border-collapse
+            text-[#F5F5F5]
+          "
+        >
+          {/* ==================================================
+              ENCABEZADO
+          ================================================== */}
+
+          <thead className="bg-[#5FAF32]">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-black">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-left
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Variedad
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold text-black">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Cantidad
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold text-black">
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Peso
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold text-black">
-                Edad
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
+                Departamento
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold text-black">
-                Ciudad
+              <th
+                className="
+                  border-r
+                  border-[#4D9128]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
+                Contacto
               </th>
 
-              <th className="px-6 py-3 text-center text-sm font-semibold text-black">
+              <th
+                className="
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-white
+                "
+              >
                 Actualizado
               </th>
             </tr>
           </thead>
 
-          <tbody className="text-black">
+          {/* ==================================================
+              DATOS
+          ================================================== */}
+
+          <tbody>
             {rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-t border-slate-100 transition-colors hover:bg-slate-50"
+                onClick={() =>
+                  goToPresentationInfo(
+                    row.presentation
+                  )
+                }
+                className="
+                  group
+                  cursor-pointer
+                  border-t
+                  border-[#292929]
+                  bg-[#0D0D0D]
+                  text-[#F5F5F5]
+                  transition-colors
+                  duration-200
+                  hover:bg-[#5FAF32]/10
+                "
               >
-                <td className="px-6 py-4 font-medium text-black">
+                {/* ==================================================
+                    VARIEDAD
+                ================================================== */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    font-medium
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.variety}
                 </td>
 
-                <td className="px-6 py-4 text-center font-semibold text-black">
+                {/* ==================================================
+                    CANTIDAD
+                ================================================== */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    font-semibold
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.quantity}
                 </td>
 
-                <td className="px-6 py-4 text-center text-black">
+                {/* ==================================================
+                    PESO
+                ================================================== */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.weight}
                 </td>
 
-                <td className="px-6 py-4 text-center text-black">
-                  {row.age}
+                {/* ==================================================
+                    DEPARTAMENTO
+                ================================================== */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                    text-[#F5F5F5]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
+                  {row.department}
                 </td>
 
-                <td className="px-6 py-4 text-center text-black">
-                  {row.city}
+                {/* ==================================================
+                    CONTACTO
+                ================================================== */}
+
+                <td
+                  className="
+                    border-r
+                    border-[#292929]
+                    px-6
+                    py-4
+                    text-center
+                  "
+                >
+                  <a
+                    href={
+                      row.whatsapp
+                        ? `https://wa.me/${row.whatsapp}`
+                        : "#"
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(event) =>
+                      event.stopPropagation()
+                    }
+                    className="
+                      inline-flex
+                      items-center
+                      rounded-lg
+                      bg-[#25D366]
+                      px-3
+                      py-2
+                      text-sm
+                      font-semibold
+                      text-white
+                      transition-colors
+                      duration-200
+                      hover:bg-[#20BD5A]
+                    "
+                  >
+                    WhatsApp
+                  </a>
                 </td>
 
-                <td className="px-6 py-4 text-center text-black">
+                {/* ==================================================
+                    ACTUALIZADO
+                ================================================== */}
+
+                <td
+                  className="
+                    px-6
+                    py-4
+                    text-center
+                    text-[#B8B8B8]
+                    transition-colors
+                    duration-200
+                    group-hover:text-[#F5F5F5]
+                  "
+                >
                   {row.updatedAt}
                 </td>
               </tr>
@@ -127,6 +379,6 @@ export default function ConsumptionTable({
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 }

@@ -22,30 +22,48 @@ export default function MisCuyesPage() {
 
   return (
     <div>
-      {/* Resumen */}
+      {/* ======================================================
+          RESUMEN
+      ====================================================== */}
+
       <CuyAvailabilitySummary catalog={catalog} />
 
-      {/* Selectores */}
-      <section className="grid gap-4 lg:grid-cols-2">
+      {/* ======================================================
+          SELECTORES
+      ====================================================== */}
+
+      <section className="grid gap-0 border-0 lg:grid-cols-2">
         <CuyCategorySelector catalog={catalog} />
         <CuyCitySelector catalog={catalog} />
       </section>
 
-      {/* Tabla */}
-      <section>
+      {/* ======================================================
+          TABLA
+      ====================================================== */}
+
+      <section className="border-0">
         <CuyAvailabilityTable catalog={catalog} />
       </section>
 
-      {/* Campaña */}
+      {/* ======================================================
+          CAMPAÑA
+      ====================================================== */}
+
       <CuyCampaign />
 
-      {/* Información + Productos */}
-      <section className="grid gap-6 lg:grid-cols-[1fr_420px]">
+      {/* ======================================================
+          INFORMACIÓN + PRODUCTOS
+      ====================================================== */}
+
+      <section className="grid gap-0 border-0 lg:grid-cols-[1fr_420px]">
         <CuyVarietyInfo catalog={catalog} />
         <CuyProductGrid catalog={catalog} />
       </section>
 
-      {/* Footer */}
+      {/* ======================================================
+          FOOTER
+      ====================================================== */}
+
       <Footer />
     </div>
   );
