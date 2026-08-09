@@ -2,59 +2,68 @@
 
 import { useState } from "react";
 
-import { cuyService } from "../services/cuy.service";
-
-import type {
-  CuyCategory,
-  CuyCity,
-  CuyProduct,
-  CuyVariant,
-} from "../types/cuy.types";
-
 import { CuyCategoryType as CategoryType } from "../types/cuy.types";
 
-import type { CuyInventoryItem } from "../data/cuy.inventory";
-
 import type { UseCuyReturn } from "../types/cuy.hook.types";
+import type { CuyServerData } from "../services/cuy.server";
 
-export function useCuy(): UseCuyReturn {
-  /* =====================================
+interface UseCuyOptions {
+  initialData: CuyServerData;
+}
+
+export function useCuy({
+  initialData,
+}: UseCuyOptions): UseCuyReturn {
+  /* ======================================================
      DATOS
-     
-     El servicio ya devuelve los datos
-     sincrónicamente, por lo que no
-     necesitamos copiarlos a estados.
-  ====================================== */
+     ======================================================
 
-  const products: CuyProduct[] =
-    cuyService.getCuyProducts();
+     Los datos llegan desde el Server Component.
 
-  const categories: CuyCategory[] =
-    cuyService.getCuyCategories();
+     Flujo actual:
 
-  const variants: CuyVariant[] =
-    cuyService.getCuyVariants();
+     Mock
+       ↓
+     cuy.server.ts
+       ↓
+     Vercel Cache
+       ↓
+     MisCuyesClient
+       ↓
+     useCuy
 
-  const cities: CuyCity[] =
-    cuyService.getCuyCities();
+     Futuro:
 
-  const inventory: CuyInventoryItem[] =
-    cuyService.getCuyInventory();
+     Firebase
+       ↓
+     cuy.server.ts
+       ↓
+     Vercel Cache
+       ↓
+     MisCuyesClient
+       ↓
+     useCuy
+     ====================================================== */
 
-  /* =====================================
+  const {
+    products,
+    categories,
+    variants,
+    cities,
+    inventory,
+  } = initialData;
+
+  /* ======================================================
      ESTADO DE CARGA
-
-     Los datos son locales y sincrónicos.
-     No existe una carga asíncrona.
-  ====================================== */
+     ====================================================== */
 
   const loading = false;
 
   const error: string | null = null;
 
-  /* =====================================
+  /* ======================================================
      FILTROS
-  ====================================== */
+     ====================================================== */
 
   const [selectedCategory, setCategory] =
     useState<string | null>(
@@ -66,13 +75,13 @@ export function useCuy(): UseCuyReturn {
       "city-arequipa"
     );
 
-  /*
+  /**
    * Solo reproductores.
    */
   const [selectedVariant, setVariant] =
     useState<string | null>(null);
 
-  /*
+  /**
    * Solo consumo.
    */
   const [selectedPresentation, setPresentation] =
@@ -80,9 +89,9 @@ export function useCuy(): UseCuyReturn {
 
   const [search, setSearch] = useState("");
 
-  /* =====================================
+  /* ======================================================
      LIMPIAR FILTROS
-  ====================================== */
+     ====================================================== */
 
   const clearFilters = () => {
     setCategory(
@@ -98,9 +107,9 @@ export function useCuy(): UseCuyReturn {
     setSearch("");
   };
 
-  /* =====================================
+  /* ======================================================
      RETURN
-  ====================================== */
+     ====================================================== */
 
   return {
     data: {

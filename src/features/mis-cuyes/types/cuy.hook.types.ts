@@ -1,4 +1,5 @@
 import type { CuyInventoryItem } from "../data/cuy.inventory";
+
 import type {
   CuyCategory,
   CuyCity,
@@ -53,6 +54,12 @@ export interface CuyData {
 
   cities: CuyCity[];
 
+  /**
+   * Fuente central de disponibilidad.
+   *
+   * Contiene cantidades, estado, peso,
+   * presentación, ciudad y fecha de actualización.
+   */
   inventory: CuyInventoryItem[];
 }
 

@@ -1,5 +1,4 @@
 import type { CuyVariant } from "../types/cuy.types";
-
 import { CuyVariantType } from "../types/cuy.types";
 
 export const cuyVariants: CuyVariant[] = [
@@ -10,6 +9,7 @@ export const cuyVariants: CuyVariant[] = [
     isActive: true,
     order: 1,
   },
+
   {
     id: "variant-andina",
     name: "Andina",
@@ -17,6 +17,7 @@ export const cuyVariants: CuyVariant[] = [
     isActive: true,
     order: 2,
   },
+
   {
     id: "variant-inti",
     name: "Inti",
@@ -24,6 +25,7 @@ export const cuyVariants: CuyVariant[] = [
     isActive: true,
     order: 3,
   },
+
   {
     id: "variant-kuri",
     name: "Kuri",
@@ -31,6 +33,7 @@ export const cuyVariants: CuyVariant[] = [
     isActive: true,
     order: 4,
   },
+
   {
     id: "variant-mantaro",
     name: "Mantaro",
@@ -38,6 +41,7 @@ export const cuyVariants: CuyVariant[] = [
     isActive: true,
     order: 5,
   },
+
   {
     id: "variant-hibrido-misti",
     name: "Híbrido Misti",
@@ -45,7 +49,8 @@ export const cuyVariants: CuyVariant[] = [
     isActive: true,
     order: 6,
   },
-    {
+
+  {
     id: "variant-consumo",
     name: "Consumo",
     type: CuyVariantType.HIBRIDO,

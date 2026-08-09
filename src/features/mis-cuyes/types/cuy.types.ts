@@ -1,7 +1,8 @@
 /**
  * ============================================================================
  * MISTI CUY
- * ----------------------------------------------------------------------------
+ *
+ * ---
  * Módulo:
  * Mis Cuyes
  *
@@ -13,7 +14,7 @@
  */
 
 /* ============================================================================
-   ENUMS
+ENUMS
 ============================================================================ */
 
 export enum CuyCategoryType {
@@ -26,6 +27,7 @@ export enum CuyVariantType {
   LINEA = "LINEA",
   HIBRIDO = "HIBRIDO",
 }
+
 export enum CuyAvailabilityStatus {
   DISPONIBLE = "DISPONIBLE",
   AGOTADO = "AGOTADO",
@@ -38,7 +40,7 @@ export enum CuySex {
 }
 
 /* ============================================================================
-   ENTIDADES
+ENTIDADES
 ============================================================================ */
 
 export interface CuyCategory {
@@ -53,17 +55,11 @@ export interface CuyCategory {
 
 export interface CuyVariant {
   id: string;
-
   name: string;
-
   type: CuyVariantType;
-
   description?: string;
-
   image?: string;
-
   isActive: boolean;
-
   order: number;
 }
 
@@ -92,24 +88,22 @@ export interface CuyContact {
   message: string;
 }
 
-export interface CuyAvailability {
-  id: string;
-  cityId: string;
-  status: CuyAvailabilityStatus;
+/* ============================================================================
+PRODUCTOS
+============================================================================ */
 
-  ageRange?: string;
-
-  weightGrams?: number;
-
-  availableMales?: number;
-
-  availableFemales?: number;
-
-  availableQuantity?: number;
-
-  updatedAt: Date;
-}
-
+/**
+ * Producto comercial.
+ *
+ * La disponibilidad NO pertenece al producto.
+ *
+ * La disponibilidad central se encuentra en:
+ *
+ * data/cuy.inventory.ts
+ *
+ * Esto evita duplicar cantidades, pesos, machos, hembras,
+ * estados y fechas de actualización.
+ */
 export interface CuyProduct {
   id: string;
 
@@ -122,8 +116,6 @@ export interface CuyProduct {
   description: string;
 
   images: CuyImage[];
-
-  availability: CuyAvailability[];
 
   contact: CuyContact;
 
