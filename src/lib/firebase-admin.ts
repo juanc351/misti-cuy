@@ -40,23 +40,22 @@ import {
 
 /* ============================================================================
    VARIABLES DE ENTORNO
-   ============================================================================ */
+============================================================================ */
 
 const projectId =
-  process.env.FIREBASE_PROJECT_ID;
+  process.env.FIREBASE_PROJECT_ID?.trim();
 
 const clientEmail =
-  process.env.FIREBASE_CLIENT_EMAIL;
+  process.env.FIREBASE_CLIENT_EMAIL?.trim();
 
 const privateKey =
-  process.env.FIREBASE_PRIVATE_KEY?.replace(
-    /\\n/g,
-    "\n"
-  );
+  process.env.FIREBASE_PRIVATE_KEY
+    ?.replace(/\\n/g, "\n")
+    .trim();
 
 /* ============================================================================
    VALIDACIÓN
-   ============================================================================ */
+============================================================================ */
 
 if (
   !projectId ||
@@ -64,13 +63,13 @@ if (
   !privateKey
 ) {
   throw new Error(
-    "Faltan las variables de entorno de Firebase Admin."
+    "Faltan las variables de entorno de Firebase Admin.",
   );
 }
 
 /* ============================================================================
    FIREBASE APP
-   ============================================================================ */
+============================================================================ */
 
 /**
  * Reutilizamos la instancia existente si Firebase
@@ -79,6 +78,7 @@ if (
  * Esto evita inicializar Firebase varias veces
  * durante el desarrollo con Next.js.
  */
+
 const firebaseApp: App =
   getApps().length > 0
     ? getApps()[0]
@@ -92,11 +92,12 @@ const firebaseApp: App =
 
 /* ============================================================================
    FIRESTORE
-   ============================================================================ */
+============================================================================ */
 
 /**
  * Instancia central de Firestore.
  */
+
 export const db: Firestore =
   getFirestore(firebaseApp);
 
