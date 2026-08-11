@@ -11,7 +11,7 @@ La arquitectura está diseñada para permitir crecimiento futuro, mantenimiento 
 # Estructura general
 misti-cuy/
 
-├── docs/
+├── docs/////
 │
 ├── public/
 │
