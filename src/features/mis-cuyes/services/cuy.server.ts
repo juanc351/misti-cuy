@@ -1,6 +1,10 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
+import {
+  unstable_cache,
+  revalidatePath,
+  revalidateTag,
+} from "next/cache";
 
 import type {
   CuyCategory,
@@ -19,197 +23,201 @@ import {
   getVariants,
 } from "../repositories/cuy.repository";
 
-/**
- * ============================================================================
- * MISTI CUY
- *
- * Módulo:
- * Mis Cuyes
- *
- * Archivo:
- * cuy.server.ts
- *
- * Responsabilidad:
- *
- * Obtener los datos de Mis Cuyes desde el repository y aplicar
- * la estrategia de caché del servidor.
- *
- * Arquitectura:
- *
- * Firestore
- *    ↓
- * cuy.repository.ts
- *    ↓
- * unstable_cache
- *    ↓
- * cuy.server.ts
- *    ↓
- * MisCuyesPage
- *    ↓
- * Client
- *
- * IMPORTANTE:
- *
- * Este archivo NO accede directamente a Firestore.
- *
- * Tampoco contiene filtros ni estado de React.
- * ============================================================================
- */
+import {
+  getPublications,
+} from "@/features/mis-cuyes/publications/repositories/publication.repository";
 
-/* ============================================================================
+import type {
+  Publication,
+} from "@/features/mis-cuyes/publications/types/publication.types";
+
+import {
+  getAdminProfile,
+} from "@/features/mis-cuyes/profile/repositories/profile.repository";
+
+import type {
+  AdminProfile,
+} from "@/features/mis-cuyes/profile/types/profile.types";
+
+/* ================================================================
    TIEMPOS DE REVALIDACIÓN
-   ============================================================================ */
+================================================================ */
 
-/**
- * Catálogos:
- *
- * - categorías
- * - variedades
- * - ciudades
- * - productos
- *
- * Cambian con poca frecuencia.
- *
- * Se mantienen en caché durante 1 hora.
- */
 const CATALOG_REVALIDATE = 3600;
 
-/**
- * Inventario:
- *
- * - cantidades
- * - machos
- * - hembras
- * - disponibilidad
- * - peso
- * - updatedAt
- *
- * Cambia con mayor frecuencia.
- *
- * Se mantiene en caché durante 5 minutos.
- */
 const INVENTORY_REVALIDATE = 300;
 
-/* ============================================================================
-   CATEGORÍAS
-   ============================================================================ */
+const PUBLICATIONS_REVALIDATE = 300;
 
-/**
- * Obtiene las categorías desde Firestore mediante el repository.
- *
- * CACHE:
- * 1 hora.
- */
+const PROFILE_REVALIDATE = 300;
+
+/* ================================================================
+   TAGS DE CACHÉ
+================================================================ */
+
+export const CUY_CACHE_TAGS = {
+  categories: "mis-cuyes-categories",
+  variants: "mis-cuyes-variants",
+  cities: "mis-cuyes-cities",
+  products: "mis-cuyes-products",
+  inventory: "mis-cuyes-inventory",
+  publications: "mis-cuyes-publications",
+  profile: "mis-cuyes-admin-profile",
+} as const;
+
+/* ================================================================
+   CATEGORÍAS
+================================================================ */
+
 export const getCuyCategories = unstable_cache(
   async (): Promise<CuyCategory[]> => {
     return getCategories();
   },
-  ["mis-cuyes-categories"],
+  [CUY_CACHE_TAGS.categories],
   {
     revalidate: CATALOG_REVALIDATE,
-    tags: ["mis-cuyes-categories"],
-  }
+    tags: [CUY_CACHE_TAGS.categories],
+  },
 );
 
-/* ============================================================================
+/* ================================================================
    VARIEDADES
-   ============================================================================ */
+================================================================ */
 
-/**
- * Obtiene las variedades desde Firestore mediante el repository.
- *
- * CACHE:
- * 1 hora.
- */
 export const getCuyVariants = unstable_cache(
   async (): Promise<CuyVariant[]> => {
     return getVariants();
   },
-  ["mis-cuyes-variants"],
+  [CUY_CACHE_TAGS.variants],
   {
     revalidate: CATALOG_REVALIDATE,
-    tags: ["mis-cuyes-variants"],
-  }
+    tags: [CUY_CACHE_TAGS.variants],
+  },
 );
 
-/* ============================================================================
+/* ================================================================
    CIUDADES
-   ============================================================================ */
+================================================================ */
 
-/**
- * Obtiene las ciudades desde Firestore mediante el repository.
- *
- * CACHE:
- * 1 hora.
- */
 export const getCuyCities = unstable_cache(
   async (): Promise<CuyCity[]> => {
     return getCities();
   },
-  ["mis-cuyes-cities"],
+  [CUY_CACHE_TAGS.cities],
   {
     revalidate: CATALOG_REVALIDATE,
-    tags: ["mis-cuyes-cities"],
-  }
+    tags: [CUY_CACHE_TAGS.cities],
+  },
 );
 
-/* ============================================================================
+/* ================================================================
    PRODUCTOS
-   ============================================================================ */
+================================================================ */
 
-/**
- * Obtiene los productos desde Firestore mediante el repository.
- *
- * CACHE:
- * 1 hora.
- *
- * Actualmente Firestore no tiene productos porque cuyProducts
- * estaba vacío durante la migración.
- */
 export const getCuyProducts = unstable_cache(
   async (): Promise<CuyProduct[]> => {
     return getProducts();
   },
-  ["mis-cuyes-products"],
+  [CUY_CACHE_TAGS.products],
   {
     revalidate: CATALOG_REVALIDATE,
-    tags: ["mis-cuyes-products"],
-  }
+    tags: [CUY_CACHE_TAGS.products],
+  },
 );
 
-/* ============================================================================
-   INVENTARIO
-   ============================================================================ */
+/* ================================================================
+   INVENTARIO ANTIGUO
+================================================================ */
 
-/**
- * Obtiene el inventario central desde Firestore mediante el repository.
- *
- * IMPORTANTE:
- *
- * inventory continúa siendo la fuente central de verdad
- * para la disponibilidad.
- *
- * CACHE:
- * 5 minutos.
- */
 export const getCuyInventory = unstable_cache(
   async (): Promise<CuyInventoryItem[]> => {
     return getInventory();
   },
-  ["mis-cuyes-inventory"],
+  [CUY_CACHE_TAGS.inventory],
   {
     revalidate: INVENTORY_REVALIDATE,
-    tags: ["mis-cuyes-inventory"],
-  }
+    tags: [CUY_CACHE_TAGS.inventory],
+  },
 );
 
-/* ============================================================================
-   DATOS COMPLETOS
-   ============================================================================ */
+/* ================================================================
+   PUBLICACIONES
+================================================================ */
 
-/**
- * Contrato de datos que necesita Mis Cuyes.
+export const getCuyPublications = unstable_cache(
+  async (): Promise<Publication[]> => {
+    return getPublications();
+  },
+  [CUY_CACHE_TAGS.publications],
+  {
+    revalidate: PUBLICATIONS_REVALIDATE,
+    tags: [CUY_CACHE_TAGS.publications],
+  },
+);
+
+/* ================================================================
+   PERFIL DEL ADMINISTRADOR
+================================================================ */
+
+/*
+ * Fuente central para:
+ *
+ * - teléfono / WhatsApp
+ * - departamento
+ * - ubicación
  */
+
+export const getCuyAdminProfile = unstable_cache(
+  async (): Promise<AdminProfile | null> => {
+    return getAdminProfile();
+  },
+  [CUY_CACHE_TAGS.profile],
+  {
+    revalidate: PROFILE_REVALIDATE,
+    tags: [CUY_CACHE_TAGS.profile],
+  },
+);
+
+/* ================================================================
+   INVALIDAR DATOS PÚBLICOS DE MIS CUYES
+================================================================ */
+
+/*
+ * Se ejecuta después de una modificación realizada
+ * desde el panel administrativo.
+ *
+ * No elimina la caché permanentemente.
+ *
+ * Simplemente marca los datos como obsoletos para que
+ * la siguiente lectura vuelva a obtener información fresca.
+ */
+
+export async function revalidateMisCuyesPublicData(): Promise<void> {
+  revalidateTag(
+    CUY_CACHE_TAGS.publications,
+    "max",
+  );
+
+  revalidateTag(
+    CUY_CACHE_TAGS.profile,
+    "max",
+  );
+
+  revalidateTag(
+    CUY_CACHE_TAGS.inventory,
+    "max",
+  );
+
+  revalidatePath(
+    "/mis-cuyes",
+    "page",
+  );
+}
+
+/* ================================================================
+   DATOS COMPLETOS
+================================================================ */
+
 export interface CuyServerData {
   products: CuyProduct[];
 
@@ -220,15 +228,16 @@ export interface CuyServerData {
   cities: CuyCity[];
 
   inventory: CuyInventoryItem[];
+
+  publications: Publication[];
+
+  profile: AdminProfile | null;
 }
 
-/**
- * Obtiene todos los datos necesarios para Mis Cuyes.
- *
- * Las consultas se ejecutan en paralelo.
- *
- * Cada grupo mantiene su propia estrategia de caché.
- */
+/* ================================================================
+   OBTENER TODOS LOS DATOS
+================================================================ */
+
 export async function getMisCuyesData(): Promise<CuyServerData> {
   const [
     products,
@@ -236,12 +245,16 @@ export async function getMisCuyesData(): Promise<CuyServerData> {
     variants,
     cities,
     inventory,
+    publications,
+    profile,
   ] = await Promise.all([
     getCuyProducts(),
     getCuyCategories(),
     getCuyVariants(),
     getCuyCities(),
     getCuyInventory(),
+    getCuyPublications(),
+    getCuyAdminProfile(),
   ]);
 
   return {
@@ -250,5 +263,7 @@ export async function getMisCuyesData(): Promise<CuyServerData> {
     variants,
     cities,
     inventory,
+    publications,
+    profile,
   };
 }

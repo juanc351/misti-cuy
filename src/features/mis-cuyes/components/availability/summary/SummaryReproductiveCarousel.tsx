@@ -8,15 +8,21 @@ import {
 import { useRef } from "react";
 
 import type { UseCuyReturn } from "../../../types/cuy.hook.types";
-import { CuyCategoryType } from "../../../types/cuy.types";
+
+import type { ReproductorPublication } from "../../../publications/types/publication.types";
+
+/* ================================================================
+   PROPS
+   ================================================================ */
 
 interface SummaryReproductiveCarouselProps {
   catalog: UseCuyReturn;
 }
 
-/**
- * Imágenes oficiales del slider de reproductores.
- */
+/* ================================================================
+   IMÁGENES OFICIALES
+   ================================================================ */
+
 const variantImages: Record<string, string> = {
   Kuri: "/images/mis-cuyes/consumo/cabeza-kuri.png",
   Perú: "/images/mis-cuyes/consumo/cabeza-peru.png",
@@ -24,9 +30,10 @@ const variantImages: Record<string, string> = {
   Andina: "/images/mis-cuyes/consumo/cabeza-andina.png",
 };
 
-/**
- * Orden oficial de las líneas reproductoras.
- */
+/* ================================================================
+   ORDEN OFICIAL
+   ================================================================ */
+
 const allowedVariants = [
   "Kuri",
   "Perú",
@@ -34,58 +41,118 @@ const allowedVariants = [
   "Andina",
 ];
 
+/* ================================================================
+   COMPONENTE
+   ================================================================ */
+
 export default function SummaryReproductiveCarousel({
   catalog,
 }: SummaryReproductiveCarouselProps) {
   const {
-    data: { inventory, variants },
+    data: {
+      publications,
+      variants,
+    },
     filters,
     actions,
   } = catalog;
 
-  /**
-   * Referencia al contenedor horizontal del slider.
-   */
-  const carouselRef = useRef<HTMLDivElement>(null);
+  /* ================================================================
+     REFERENCIA DEL CARRUSEL
+     ================================================================ */
 
-  /**
-   * Construcción de las tarjetas.
-   */
+  const carouselRef =
+    useRef<HTMLDivElement | null>(null);
+
+  /* ================================================================
+     PUBLICACIONES DE REPRODUCTORES
+     
+     Solo:
+     
+     - type = REPRODUCTOR
+     - status = DISPONIBLE
+     
+     El type predicate le indica a TypeScript que
+     después del filtro todas son ReproductorPublication.
+     ================================================================ */
+
+  const reproductivePublications =
+    publications.filter(
+      (
+        publication
+      ): publication is ReproductorPublication =>
+        publication.type === "REPRODUCTOR" &&
+        publication.status === "DISPONIBLE"
+    );
+
+  /* ================================================================
+     AGRUPAR PUBLICACIONES POR RAZA / LÍNEA
+     
+     Ejemplo:
+
+     Perú → 3
+     Perú → 5
+     Perú → 2
+
+     Resultado:
+
+     Perú → 10
+     ================================================================ */
+
+  const groupedByBreed =
+    reproductivePublications.reduce(
+      (groups, publication) => {
+        const breed =
+          publication.breed.trim();
+
+        const current =
+          groups.get(breed) ?? 0;
+
+        groups.set(
+          breed,
+          current + publication.quantity
+        );
+
+        return groups;
+      },
+      new Map<string, number>()
+    );
+
+  /* ================================================================
+     CONSTRUIR TARJETAS
+     ================================================================ */
+
   const cards = allowedVariants
     .map((allowedName) => {
-      const variant = variants.find(
-        (item) => item.name === allowedName
-      );
+      const total =
+        groupedByBreed.get(
+          allowedName
+        );
 
-      if (!variant) {
+      if (
+        total === undefined ||
+        total <= 0
+      ) {
         return null;
       }
 
-      const inventoryItems = inventory.filter(
-        (item) =>
-          item.category === CuyCategoryType.REPRODUCTOR &&
-          item.cityId === filters.selectedCity &&
-          item.variantId === variant.id
-      );
-
-      if (inventoryItems.length === 0) {
-        return null;
-      }
-
-      const total = inventoryItems.reduce(
-        (sum, item) =>
-          sum +
-          (item.males ?? 0) +
-          (item.females ?? 0),
-        0
-      );
+      const variant =
+        variants.find(
+          (item) =>
+            item.name === allowedName
+        );
 
       return {
-        id: variant.id,
-        name: variant.name,
+        id:
+          variant?.id ??
+          `breed-${allowedName}`,
+
+        name: allowedName,
+
         image:
           variantImages[allowedName] ??
           "/images/mis-cuyes/consumo/cabeza-linea.png",
+
         total,
       };
     })
@@ -100,9 +167,10 @@ export default function SummaryReproductiveCarousel({
       } => card !== null
     );
 
-  /**
-   * Movimiento horizontal del slider.
-   */
+  /* ================================================================
+     MOVIMIENTO DEL CARRUSEL
+     ================================================================ */
+
   const scroll = (
     direction: "left" | "right"
   ) => {
@@ -115,21 +183,29 @@ export default function SummaryReproductiveCarousel({
     });
   };
 
+  /* ================================================================
+     RENDER
+     ================================================================ */
+
   return (
-    <section className="w-full bg-[#11110F] text-[#F5F5F5]">
-      {/* =====================================
+    <section>
+      {/* ==========================================================
           ENCABEZADO
-      ====================================== */}
+      ========================================================== */}
 
       <div className="mb-4">
         <h2 className="text-sm font-semibold text-[#F5F5F5]">
           Resumen de disponibilidad por línea genética
         </h2>
+
+        <p className="mt-1 text-xs text-[#B8B8B8]">
+          Disponibilidad total agrupada por línea.
+        </p>
       </div>
 
-      {/* =====================================
+      {/* ==========================================================
           SLIDER
-      ====================================== */}
+      ========================================================== */}
 
       <div
         className="
@@ -140,14 +216,16 @@ export default function SummaryReproductiveCarousel({
           px-12
         "
       >
-        {/* =====================================
+        {/* ========================================================
             FLECHA IZQUIERDA
-        ====================================== */}
+        ======================================================== */}
 
         <button
           type="button"
           aria-label="Ver líneas anteriores"
-          onClick={() => scroll("left")}
+          onClick={() =>
+            scroll("left")
+          }
           className="
             absolute
             left-2
@@ -174,9 +252,9 @@ export default function SummaryReproductiveCarousel({
           <ChevronLeft size={18} />
         </button>
 
-        {/* =====================================
+        {/* ========================================================
             CONTENEDOR HORIZONTAL
-        ====================================== */}
+        ======================================================== */}
 
         <div
           ref={carouselRef}
@@ -193,129 +271,158 @@ export default function SummaryReproductiveCarousel({
             scrollbar-none
           "
         >
-          {cards.map((card) => {
-            const active =
-              filters.selectedVariant === card.id;
+          {cards.length > 0 ? (
+            cards.map((card) => {
+              const active =
+                filters.selectedVariant ===
+                card.id;
 
-            return (
-              <button
-                key={card.id}
-                type="button"
-                onClick={() =>
-                  actions.setVariant(card.id)
-                }
-                className={`
-                  group
-                  flex
-                  h-[82px]
-                  w-max
-                  shrink-0
-                  items-center
-                  gap-3
-                  rounded-xl
-                  border
-                  px-3
-                  text-left
-                  transition-all
-                  duration-200
-                  ${
-                    active
-                      ? `
-                        border-[#5FAF32]
-                        bg-[#0D0D0D]
-                        ring-1
-                        ring-[#5FAF32]/30
-                        shadow-sm
-                      `
-                      : `
-                        border-[#292929]
-                        bg-[#0D0D0D]
-                        hover:border-[#5FAF32]/60
-                        hover:bg-[#5FAF32]/10
-                      `
+              return (
+                <button
+                  key={card.id}
+                  type="button"
+                  onClick={() =>
+                    actions.setVariant(
+                      active
+                        ? null
+                        : card.id
+                    )
                   }
-                `}
-              >
-                {/* =================================
-                    IMAGEN
-                ================================== */}
-
-                <div
-                  className="
-                    relative
-                    h-14
-                    w-14
+                  className={`
+                    group
+                    flex
+                    h-[82px]
+                    w-max
                     shrink-0
-                    overflow-hidden
-                    rounded-lg
-                    bg-[#11110F]
-                  "
+                    items-center
+                    gap-3
+                    rounded-xl
+                    border
+                    px-3
+                    text-left
+                    transition-all
+                    duration-200
+
+                    ${
+                      active
+                        ? `
+                          border-[#5FAF32]
+                          bg-[#0D0D0D]
+                          ring-1
+                          ring-[#5FAF32]/30
+                          shadow-sm
+                        `
+                        : `
+                          border-[#292929]
+                          bg-[#0D0D0D]
+                          hover:border-[#5FAF32]/60
+                          hover:bg-[#5FAF32]/10
+                        `
+                    }
+                  `}
                 >
-                  <Image
-                    src={card.image}
-                    alt={`Cuy ${card.name}`}
-                    fill
-                    sizes="56px"
-                    className="
-                      object-contain
-                      transition-transform
-                      duration-200
-                      group-hover:scale-105
-                    "
-                  />
-                </div>
+                  {/* ==================================================
+                      IMAGEN
+                  ================================================== */}
 
-                {/* =================================
-                    INFORMACIÓN
-                ================================== */}
-
-                <div className="min-w-0">
-                  <h3
+                  <div
                     className="
-                      truncate
-                      text-sm
-                      font-bold
-                      text-[#F5F5F5]
+                      relative
+                      h-14
+                      w-14
+                      shrink-0
+                      overflow-hidden
+                      rounded-lg
+                      bg-[#11110F]
                     "
                   >
-                    {card.name}
-                  </h3>
+                    <Image
+                      src={card.image}
+                      alt={`Cuy ${card.name}`}
+                      fill
+                      sizes="56px"
+                      className="
+                        object-contain
+                        transition-transform
+                        duration-200
+                        group-hover:scale-105
+                      "
+                    />
+                  </div>
 
-                  <p
-                    className="
-                      mt-0.5
-                      text-2xl
-                      font-bold
-                      leading-none
-                      text-[#5FAF32]
-                    "
-                  >
-                    {card.total}
-                  </p>
+                  {/* ==================================================
+                      INFORMACIÓN
+                  ================================================== */}
 
-                  <p
-                    className="
-                      mt-0.5
-                      text-[11px]
-                      text-[#B8B8B8]
-                    "
-                  >
-                    disponibles
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+                  <div className="min-w-0">
+                    <h3
+                      className="
+                        truncate
+                        text-sm
+                        font-bold
+                        text-[#F5F5F5]
+                      "
+                    >
+                      {card.name}
+                    </h3>
+
+                    <p
+                      className="
+                        mt-0.5
+                        text-2xl
+                        font-bold
+                        leading-none
+                        text-[#5FAF32]
+                      "
+                    >
+                      {card.total}
+                    </p>
+
+                    <p
+                      className="
+                        mt-0.5
+                        text-[11px]
+                        text-[#B8B8B8]
+                      "
+                    >
+                      disponibles
+                    </p>
+                  </div>
+                </button>
+              );
+            })
+          ) : (
+            <div
+              className="
+                flex
+                min-h-[82px]
+                w-full
+                items-center
+                justify-center
+                rounded-xl
+                border
+                border-dashed
+                border-[#292929]
+                bg-[#0D0D0D]
+                text-sm
+                text-[#777777]
+              "
+            >
+              No hay reproductores disponibles.
+            </div>
+          )}
         </div>
 
-        {/* =====================================
+        {/* ========================================================
             FLECHA DERECHA
-        ====================================== */}
+        ======================================================== */}
 
         <button
           type="button"
           aria-label="Ver siguientes líneas"
-          onClick={() => scroll("right")}
+          onClick={() =>
+            scroll("right")
+          }
           className="
             absolute
             right-2

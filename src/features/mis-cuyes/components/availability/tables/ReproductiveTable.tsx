@@ -1,7 +1,6 @@
 "use client";
 
 import type { UseCuyReturn } from "../../../types/cuy.hook.types";
-import { CuyCategoryType } from "../../../types/cuy.types";
 
 interface ReproductiveTableProps {
   catalog: UseCuyReturn;
@@ -11,195 +10,385 @@ export default function ReproductiveTable({
   catalog,
 }: ReproductiveTableProps) {
   const {
-    data: { inventory, variants, cities },
+    data: { publications, profile },
     filters,
+    selection,
     actions,
   } = catalog;
 
-  // ======================================================
-  // NAVEGAR A INFORMACIÓN DE LA LÍNEA
-  // ======================================================
+  /* ================================================================
+     PUBLICACIONES DE REPRODUCTORES
+  ================================================================= */
 
-  const goToVarietyInfo = (variantId: string) => {
-    // Selecciona la línea genética
-    actions.setVariant(variantId);
-
-    // Esperamos la actualización de la selección
-    // antes de realizar el desplazamiento.
-    requestAnimationFrame(() => {
-      document
-        .getElementById("informacion-cuy")
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-    });
-  };
-
-  // ======================================================
-  // CONSTRUCCIÓN DE FILAS
-  // ======================================================
-
-  const rows = inventory
+  const rows = publications
     .filter(
-      (item) =>
-        item.category === CuyCategoryType.REPRODUCTOR &&
-        item.cityId === filters.selectedCity
-    )
-    .map((item) => {
-      const variant = variants.find(
-        (variant) => variant.id === item.variantId
-      );
+      (
+        publication,
+      ): publication is Extract<
+        typeof publication,
+        { type: "REPRODUCTOR" }
+      > => {
+        /* ------------------------------------------------------------
+           CATEGORÍA
+        ------------------------------------------------------------ */
 
-      const city = cities.find(
-        (city) => city.id === item.cityId
-      );
+        if (
+          publication.type !==
+          "REPRODUCTOR"
+        ) {
+          return false;
+        }
+
+        /* ------------------------------------------------------------
+           DEPARTAMENTO
+        ------------------------------------------------------------ */
+
+        if (
+          filters.selectedDepartment &&
+          publication.department
+            .trim()
+            .toLowerCase() !==
+            filters.selectedDepartment
+              .trim()
+              .toLowerCase()
+        ) {
+          return false;
+        }
+
+        /* ------------------------------------------------------------
+           ESTADO
+        ------------------------------------------------------------ */
+
+        if (
+          filters.selectedStatus !==
+            "ALL" &&
+          publication.status !==
+            filters.selectedStatus
+        ) {
+          return false;
+        }
+
+        /* ------------------------------------------------------------
+           VARIEDAD / LÍNEA
+        ------------------------------------------------------------ */
+
+        if (
+          filters.selectedVariant
+        ) {
+          const selectedVariant =
+            filters.selectedVariant
+              .trim()
+              .toLowerCase();
+
+          const breed =
+            publication.breed
+              .trim()
+              .toLowerCase();
+
+          const line =
+            publication.line
+              ?.trim()
+              .toLowerCase();
+
+          if (
+            breed !== selectedVariant &&
+            line !== selectedVariant
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      },
+    )
+    .map((publication) => {
+      const breed =
+        publication.breed
+          .trim();
+
+      const normalizedBreed =
+        breed.toLowerCase();
+
+      /* ------------------------------------------------------------
+         RAZAS RECONOCIDAS
+        ------------------------------------------------------------ */
+
+      const isKnownBreed =
+        normalizedBreed === "perú" ||
+        normalizedBreed === "peru" ||
+        normalizedBreed === "kuri" ||
+        normalizedBreed === "andina" ||
+        normalizedBreed === "inti";
+
+      /* ------------------------------------------------------------
+         NATIVO
+        ------------------------------------------------------------ */
+
+      const isNative =
+        normalizedBreed ===
+        "nativo";
+
+      /* ------------------------------------------------------------
+         VARIEDAD MOSTRADA EN LA TABLA
+
+         Razas:
+           Perú
+           Kuri
+           Andina
+           Inti
+
+         Nativo:
+           Línea
+
+         El nombre de la línea, por ejemplo Mantaro,
+         NO aparece aquí.
+        ------------------------------------------------------------ */
+
+      const variety =
+        isNative
+          ? "Línea"
+          : isKnownBreed
+            ? breed
+            : "Línea";
 
       return {
-        id: item.id,
-        variantId: item.variantId,
-        variety: variant?.name ?? "-",
-        males: item.males ?? 0,
-        females: item.females ?? 0,
-        total:
-          (item.males ?? 0) +
-          (item.females ?? 0),
-        age: item.ageRange ?? "-",
-        city: city?.name ?? "-",
-        updatedAt: item.updatedAt,
+        id: publication.id,
+
+        variety,
+
+        sex: publication.sex,
+
+        quantity:
+          publication.quantity,
+
+        price:
+          publication.price,
+
+        department:
+          publication.department ?? "",
+
+        location:
+          profile?.location ?? "",
+
+        whatsapp:
+          profile?.phone ?? "",
+
+        status:
+          publication.status,
+
+        updatedAt:
+          publication.updatedAt
+            ? publication.updatedAt.split("T")[0]
+            : "-",
       };
     });
 
+  /* ================================================================
+     WHATSAPP
+  ================================================================= */
+
+  const getWhatsappUrl = (
+    phone: string,
+  ) => {
+    const cleanPhone =
+      phone.replace(/\D/g, "");
+
+    if (!cleanPhone) {
+      return null;
+    }
+
+    return `https://wa.me/${cleanPhone}`;
+  };
+
+  /* ================================================================
+     DEPARTAMENTO + UBICACIÓN
+  ================================================================= */
+
+  const getLocationLabel = (
+    department: string,
+    location: string,
+  ) => {
+    if (
+      department &&
+      location
+    ) {
+      return `${department} - ${location}`;
+    }
+
+    return (
+      department ||
+      location ||
+      "-"
+    );
+  };
+
+  /* ================================================================
+     RENDER
+  ================================================================= */
+
   return (
-    <section className="bg-[#0D0D0D]">
-      {/* ======================================================
+    <section className="bg-[#09090B]">
+
+      {/* ============================================================
           ENCABEZADO
-      ====================================================== */}
+      ============================================================ */}
 
       <div className="px-4 py-5 md:px-6">
-        <h2 className="text-lg font-bold text-[#F5F5F5]">
+        <h2 className="text-lg font-bold text-white">
           Disponibilidad de Reproductores
         </h2>
 
-        <p className="mt-1 text-sm text-[#B8B8B8]">
-          Información actualizada de reproductores disponibles.
+        <p className="mt-1 text-sm text-[#A1A1AA]">
+          Reproductores según los filtros seleccionados.
         </p>
       </div>
 
-      {/* ======================================================
+      {/* ============================================================
           TABLA
-      ====================================================== */}
+      ============================================================ */}
 
       <div
         className="
           overflow-x-auto
           rounded-xl
           border
-          border-[#292929]
+          border-[#27272A]
         "
       >
         <table
           className="
             min-w-full
             border-collapse
-            text-[#F5F5F5]
           "
         >
-          {/* ==================================================
-              ENCABEZADO DE LA TABLA
-          ================================================== */}
 
-          <thead className="bg-[#5FAF32]">
+          {/* ========================================================
+              ENCABEZADO
+          ======================================================== */}
+
+          <thead className="bg-[#00BC7D]">
             <tr>
+
+              {/* VARIEDAD */}
+
               <th
                 className="
                   border-r
-                  border-[#4D9128]
+                  border-[#009F6A]
                   px-6
                   py-3
                   text-left
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
                 "
               >
                 Variedad
               </th>
 
-              <th
-                className="
-                  border-r
-                  border-[#4D9128]
-                  px-6
-                  py-3
-                  text-center
-                  text-sm
-                  font-semibold
-                  text-white
-                "
-              >
-                Machos
-              </th>
+              {/* SEXO */}
 
               <th
                 className="
                   border-r
-                  border-[#4D9128]
+                  border-[#009F6A]
                   px-6
                   py-3
                   text-center
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
                 "
               >
-                Hembras
+                Sexo
               </th>
+
+              {/* CANTIDAD */}
 
               <th
                 className="
                   border-r
-                  border-[#4D9128]
+                  border-[#009F6A]
                   px-6
                   py-3
                   text-center
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
                 "
               >
-                Total
+                Cantidad
               </th>
+
+              {/* PRECIO */}
 
               <th
                 className="
                   border-r
-                  border-[#4D9128]
+                  border-[#009F6A]
                   px-6
                   py-3
                   text-center
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
                 "
               >
-                Edad
+                Precio
               </th>
+
+              {/* UBICACIÓN */}
 
               <th
                 className="
                   border-r
-                  border-[#4D9128]
+                  border-[#009F6A]
                   px-6
                   py-3
                   text-center
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
                 "
               >
-                Ciudad
+                Ubicación
               </th>
+
+              {/* ESTADO */}
+
+              <th
+                className="
+                  border-r
+                  border-[#009F6A]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-black
+                "
+              >
+                Estado
+              </th>
+
+              {/* CONTACTO */}
+
+              <th
+                className="
+                  border-r
+                  border-[#009F6A]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-black
+                "
+              >
+                Contacto
+              </th>
+
+              {/* ACTUALIZADO */}
 
               <th
                 className="
@@ -208,164 +397,269 @@ export default function ReproductiveTable({
                   text-center
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
                 "
               >
                 Actualizado
               </th>
+
             </tr>
           </thead>
 
-          {/* ==================================================
+          {/* ========================================================
               DATOS
-          ================================================== */}
+          ======================================================== */}
 
           <tbody>
-            {rows.map((row) => (
-              <tr
-                key={row.id}
-                onClick={() =>
-                  goToVarietyInfo(row.variantId)
-                }
-                className="
-                  group
-                  cursor-pointer
-                  border-t
-                  border-[#292929]
-                  bg-[#0D0D0D]
-                  text-[#F5F5F5]
-                  transition-colors
-                  duration-200
-                  hover:bg-[#5FAF32]/10
-                "
-              >
-                {/* VARIEDAD */}
+            {rows.length > 0 ? (
+              rows.map((row) => {
+                const whatsappUrl =
+                  getWhatsappUrl(
+                    row.whatsapp,
+                  );
 
+                const isAvailable =
+                  row.status ===
+                  "DISPONIBLE";
+
+                const isSelected =
+                  selection.selectedPublicationId ===
+                  row.id;
+
+                return (
+                  <tr
+                    key={row.id}
+                    onClick={() =>
+                      actions.selectPublication(
+                        row.id,
+                      )
+                    }
+                    className={`
+                      cursor-pointer
+                      border-t
+                      border-[#27272A]
+                      text-white
+                      transition-colors
+                      duration-200
+
+                      ${
+                        isSelected
+                          ? "bg-[#00BC7D]/20 ring-1 ring-inset ring-[#00BC7D]"
+                          : "bg-[#09090B] hover:bg-[#00BC7D]/10"
+                      }
+                    `}
+                  >
+
+                    {/* VARIEDAD */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        font-medium
+                        text-white
+                      "
+                    >
+                      {row.variety}
+                    </td>
+
+                    {/* SEXO */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        text-white
+                      "
+                    >
+                      {row.sex ===
+                      "MACHO"
+                        ? "Macho"
+                        : "Hembra"}
+                    </td>
+
+                    {/* CANTIDAD */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        text-white
+                      "
+                    >
+                      {row.quantity}
+                    </td>
+
+                    {/* PRECIO */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      S/ {row.price}
+                    </td>
+
+                    {/* UBICACIÓN */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        text-white
+                      "
+                    >
+                      {getLocationLabel(
+                        row.department,
+                        row.location,
+                      )}
+                    </td>
+
+                    {/* ESTADO */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                      "
+                    >
+                      {isAvailable ? (
+                        <span
+                          className="
+                            inline-flex
+                            rounded-full
+                            bg-[#00BC7D]/15
+                            px-3
+                            py-1
+                            text-xs
+                            font-semibold
+                            text-[#00BC7D]
+                          "
+                        >
+                          Disponible
+                        </span>
+                      ) : (
+                        <span
+                          className="
+                            inline-flex
+                            rounded-full
+                            bg-[#EF4444]/10
+                            px-3
+                            py-1
+                            text-xs
+                            font-semibold
+                            text-[#EF4444]
+                          "
+                        >
+                          Vendido
+                        </span>
+                      )}
+                    </td>
+
+                    {/* CONTACTO */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                      "
+                    >
+                      {whatsappUrl ? (
+                        <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(event) =>
+                            event.stopPropagation()
+                          }
+                          className="
+                            inline-flex
+                            items-center
+                            justify-center
+                            rounded-lg
+                            bg-[#00BC7D]
+                            px-3
+                            py-2
+                            text-xs
+                            font-semibold
+                            text-black
+                            transition-colors
+                            hover:bg-[#00A86F]
+                          "
+                        >
+                          WhatsApp
+                        </a>
+                      ) : (
+                        <span
+                          className="
+                            text-xs
+                            text-[#71717A]
+                          "
+                        >
+                          No disponible
+                        </span>
+                      )}
+                    </td>
+
+                    {/* ACTUALIZADO */}
+
+                    <td
+                      className="
+                        px-6
+                        py-4
+                        text-center
+                        text-[#A1A1AA]
+                      "
+                    >
+                      {row.updatedAt}
+                    </td>
+
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
                 <td
+                  colSpan={8}
                   className="
-                    border-r
-                    border-[#292929]
                     px-6
-                    py-4
-                    font-medium
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.variety}
-                </td>
-
-                {/* MACHOS */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
+                    py-10
                     text-center
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
+                    text-sm
+                    text-[#A1A1AA]
                   "
                 >
-                  {row.males}
-                </td>
-
-                {/* HEMBRAS */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.females}
-                </td>
-
-                {/* TOTAL */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                    font-semibold
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.total}
-                </td>
-
-                {/* EDAD */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.age}
-                </td>
-
-                {/* CIUDAD */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.city}
-                </td>
-
-                {/* ACTUALIZADO */}
-
-                <td
-                  className="
-                    px-6
-                    py-4
-                    text-center
-                    text-[#B8B8B8]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.updatedAt}
+                  No hay publicaciones de
+                  reproductores para los
+                  filtros seleccionados.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
+
         </table>
       </div>
     </section>

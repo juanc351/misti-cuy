@@ -2,10 +2,17 @@
 
 import { useState } from "react";
 
-import { CuyCategoryType as CategoryType } from "../types/cuy.types";
+import {
+  CuyCategoryType as CategoryType,
+} from "../types/cuy.types";
 
-import type { UseCuyReturn } from "../types/cuy.hook.types";
-import type { CuyServerData } from "../services/cuy.server";
+import type {
+  UseCuyReturn,
+} from "../types/cuy.hook.types";
+
+import type {
+  CuyServerData,
+} from "../services/cuy.server";
 
 interface UseCuyOptions {
   initialData: CuyServerData;
@@ -14,102 +21,104 @@ interface UseCuyOptions {
 export function useCuy({
   initialData,
 }: UseCuyOptions): UseCuyReturn {
-  /* ======================================================
-     DATOS
-     ======================================================
-
-     Los datos llegan desde el Server Component.
-
-     Flujo actual:
-
-     Mock
-       ↓
-     cuy.server.ts
-       ↓
-     Vercel Cache
-       ↓
-     MisCuyesClient
-       ↓
-     useCuy
-
-     Futuro:
-
-     Firebase
-       ↓
-     cuy.server.ts
-       ↓
-     Vercel Cache
-       ↓
-     MisCuyesClient
-       ↓
-     useCuy
-     ====================================================== */
-
   const {
     products,
     categories,
     variants,
     cities,
     inventory,
+    publications,
+    profile,
   } = initialData;
-
-  /* ======================================================
-     ESTADO DE CARGA
-     ====================================================== */
 
   const loading = false;
 
   const error: string | null = null;
 
-  /* ======================================================
+  /* ================================================================
      FILTROS
-     ====================================================== */
+  ================================================================= */
 
-  const [selectedCategory, setCategory] =
-    useState<string | null>(
-      CategoryType.REPRODUCTOR
-    );
+  const [
+    selectedCategory,
+    setCategory,
+  ] = useState<string | null>(
+    CategoryType.REPRODUCTOR,
+  );
 
-  const [selectedCity, setCity] =
-    useState<string | null>(
-      "city-arequipa"
-    );
+  const [
+    selectedDepartment,
+    setDepartment,
+  ] = useState<string | null>(null);
 
-  /**
-   * Solo reproductores.
-   */
-  const [selectedVariant, setVariant] =
-    useState<string | null>(null);
+  const [
+    selectedStatus,
+    setStatus,
+  ] = useState<
+    | "ALL"
+    | "DISPONIBLE"
+    | "NO_DISPONIBLE"
+  >("ALL");
 
-  /**
-   * Solo consumo.
-   */
-  const [selectedPresentation, setPresentation] =
-    useState<string | null>(null);
+  const [
+    selectedVariant,
+    setVariant,
+  ] = useState<string | null>(null);
 
-  const [search, setSearch] = useState("");
+  const [
+    selectedPresentation,
+    setPresentation,
+  ] = useState<string | null>(null);
 
-  /* ======================================================
+  const [
+    search,
+    setSearch,
+  ] = useState("");
+
+  /* ================================================================
+     PUBLICACIÓN SELECCIONADA
+  ================================================================= */
+
+  const [
+    selectedPublicationId,
+    setSelectedPublicationId,
+  ] = useState<string | null>(null);
+
+  /* ================================================================
+     SELECCIONAR PUBLICACIÓN
+  ================================================================= */
+
+  const selectPublication = (
+    id: string,
+  ) => {
+    setSelectedPublicationId(id);
+  };
+
+  /* ================================================================
      LIMPIAR FILTROS
-     ====================================================== */
+  ================================================================= */
 
   const clearFilters = () => {
     setCategory(
-      CategoryType.REPRODUCTOR
+      CategoryType.REPRODUCTOR,
     );
 
-    setCity("city-arequipa");
+    setDepartment(null);
+
+    setStatus("ALL");
 
     setVariant(null);
 
     setPresentation(null);
 
     setSearch("");
+
+    setSelectedPublicationId(null);
   };
 
-  /* ======================================================
+  /* ================================================================
      RETURN
-     ====================================================== */
+  ================================================================= */
 
   return {
     data: {
@@ -118,6 +127,8 @@ export function useCuy({
       variants,
       cities,
       inventory,
+      publications,
+      profile,
     },
 
     loading,
@@ -126,18 +137,25 @@ export function useCuy({
 
     filters: {
       selectedCategory,
-      selectedCity,
+      selectedDepartment,
+      selectedStatus,
       selectedVariant,
       selectedPresentation,
       search,
     },
 
+    selection: {
+      selectedPublicationId,
+    },
+
     actions: {
       setCategory,
-      setCity,
+      setDepartment,
+      setStatus,
       setVariant,
       setPresentation,
       setSearch,
+      selectPublication,
       clearFilters,
     },
   };

@@ -16,7 +16,8 @@ export default function CuyAvailabilitySummary({
   const { filters } = catalog;
 
   const isConsumption =
-    filters.selectedCategory === CuyCategoryType.CONSUMO;
+    filters.selectedCategory ===
+    CuyCategoryType.CONSUMO;
 
   return (
     <section
@@ -24,17 +25,21 @@ export default function CuyAvailabilitySummary({
         w-full
         rounded-2xl
         border
-        border-[#292929]
-        bg-[#11110F]
+        border-[#27272A]
+        bg-[#18181B]
         px-4
         py-4
-        text-[#F5F5F5]
+        text-white
       "
     >
       {isConsumption ? (
-        <SummaryConsumptionCarousel catalog={catalog} />
+        <SummaryConsumptionCarousel
+          catalog={catalog}
+        />
       ) : (
-        <SummaryReproductiveCarousel catalog={catalog} />
+        <SummaryReproductiveCarousel
+          catalog={catalog}
+        />
       )}
     </section>
   );

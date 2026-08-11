@@ -1,7 +1,6 @@
 "use client";
 
 import type { UseCuyReturn } from "../../../types/cuy.hook.types";
-import { CuyCategoryType } from "../../../types/cuy.types";
 
 interface ConsumptionTableProps {
   catalog: UseCuyReturn;
@@ -11,188 +10,324 @@ export default function ConsumptionTable({
   catalog,
 }: ConsumptionTableProps) {
   const {
-    data: { inventory, variants, cities },
+    data: { publications, profile },
     filters,
+    selection,
     actions,
   } = catalog;
 
-  // ======================================================
-  // NAVEGAR A INFORMACIÓN DE LA PRESENTACIÓN
-  // ======================================================
+  /* ================================================================
+     PUBLICACIONES DE CONSUMO
+  ================================================================= */
 
-  const goToPresentationInfo = (
-    presentation: string
+  const rows = publications
+    .filter(
+      (
+        publication,
+      ): publication is Extract<
+        typeof publication,
+        { type: "CONSUMO" }
+      > => {
+        /* ------------------------------------------------------------
+           CATEGORÍA
+        ------------------------------------------------------------ */
+
+        if (
+          publication.type !== "CONSUMO"
+        ) {
+          return false;
+        }
+
+        /* ------------------------------------------------------------
+           UBICACIÓN / DEPARTAMENTO
+        ------------------------------------------------------------ */
+
+        if (
+          filters.selectedDepartment &&
+          publication.department
+            .trim()
+            .toLowerCase() !==
+            filters.selectedDepartment
+              .trim()
+              .toLowerCase()
+        ) {
+          return false;
+        }
+
+        /* ------------------------------------------------------------
+           ESTADO
+        ------------------------------------------------------------ */
+
+        if (
+          filters.selectedStatus !== "ALL" &&
+          publication.status !==
+            filters.selectedStatus
+        ) {
+          return false;
+        }
+
+        /* ------------------------------------------------------------
+           PRESENTACIÓN / PESO
+        ------------------------------------------------------------ */
+
+        if (
+          filters.selectedPresentation
+        ) {
+          const selectedPresentation =
+            filters.selectedPresentation
+              .trim()
+              .toLowerCase();
+
+          const publicationWeight =
+            String(
+              publication.weight,
+            ).toLowerCase();
+
+          const publicationWeightWithUnit =
+            `${publication.weight} g`
+              .toLowerCase();
+
+          if (
+            selectedPresentation !==
+              publicationWeight &&
+            selectedPresentation !==
+              publicationWeightWithUnit
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      },
+    )
+    .map((publication) => ({
+      id: publication.id,
+
+      quantity:
+        publication.quantity,
+
+      weight:
+        publication.weight,
+
+      price:
+        publication.price,
+
+      department:
+        publication.department ?? "",
+
+      location:
+        profile?.location ?? "",
+
+      whatsapp:
+        profile?.phone ?? "",
+
+      status:
+        publication.status,
+
+      observations:
+        publication.observations,
+
+      /* ------------------------------------------------------------
+         FECHA
+
+         2026-08-11T03:13:40.000Z
+         ↓
+         2026-08-11
+      ------------------------------------------------------------ */
+
+      updatedAt:
+        publication.updatedAt
+          ? publication.updatedAt.split("T")[0]
+          : "-",
+    }));
+
+  /* ================================================================
+     WHATSAPP
+  ================================================================= */
+
+  const getWhatsappUrl = (
+    phone: string,
   ) => {
-    actions.setPresentation(presentation);
+    const cleanPhone =
+      phone.replace(/\D/g, "");
 
-    requestAnimationFrame(() => {
-      document
-        .getElementById("informacion-cuy")
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-    });
+    if (!cleanPhone) {
+      return null;
+    }
+
+    return `https://wa.me/${cleanPhone}`;
   };
 
-  // ======================================================
-  // CONSTRUCCIÓN DE FILAS
-  // ======================================================
+  /* ================================================================
+     UBICACIÓN
+  ================================================================= */
 
-  const rows = inventory
-    .filter(
-      (item) =>
-        item.category === CuyCategoryType.CONSUMO &&
-        item.cityId === filters.selectedCity
-    )
-    .map((item) => {
-      const variant = variants.find(
-        (variant) => variant.id === item.variantId
-      );
+  const getLocationLabel = (
+    department: string,
+    location: string,
+  ) => {
+    if (
+      department &&
+      location
+    ) {
+      return `${department} - ${location}`;
+    }
 
-      const city = cities.find(
-        (city) => city.id === item.cityId
-      );
+    return (
+      department ||
+      location ||
+      "-"
+    );
+  };
 
-      return {
-        id: item.id,
-
-        variety: variant?.name ?? "-",
-
-        quantity: item.quantity ?? 0,
-
-        weight: item.averageWeight
-          ? `${item.averageWeight} g`
-          : "-",
-
-        presentation:
-          item.presentation ??
-          `${item.averageWeight ?? "-"} g`,
-
-        department: city?.department ?? "-",
-
-        updatedAt: item.updatedAt,
-
-        whatsapp: city?.whatsapp ?? "",
-      };
-    });
+  /* ================================================================
+     RENDER
+  ================================================================= */
 
   return (
-    <section className="bg-[#0D0D0D]">
-      {/* ======================================================
+    <section className="bg-[#09090B]">
+      {/* ============================================================
           ENCABEZADO
-      ====================================================== */}
+      ============================================================ */}
 
       <div className="px-4 py-5 md:px-6">
-        <h2 className="text-lg font-bold text-[#F5F5F5]">
+        <h2 className="text-lg font-bold text-white">
           Disponibilidad para Consumo
         </h2>
 
-        <p className="mt-1 text-sm text-[#B8B8B8]">
-          Información actualizada de cuyes para consumo.
+        <p className="mt-1 text-sm text-[#A1A1AA]">
+          Cuyes para consumo según los filtros seleccionados.
         </p>
       </div>
 
-      {/* ======================================================
+      {/* ============================================================
           TABLA
-      ====================================================== */}
+      ============================================================ */}
 
       <div
         className="
           overflow-x-auto
-          border
-          border-[#292929]
           rounded-xl
+          border
+          border-[#27272A]
         "
       >
         <table
           className="
             min-w-full
             border-collapse
-            text-[#F5F5F5]
           "
         >
-          {/* ==================================================
+          {/* ========================================================
               ENCABEZADO
-          ================================================== */}
+          ======================================================== */}
 
-          <thead className="bg-[#5FAF32]">
+          <thead className="bg-[#00BC7D]">
             <tr>
-              <th
-                className="
-                  border-r
-                  border-[#4D9128]
-                  px-6
-                  py-3
-                  text-left
-                  text-sm
-                  font-semibold
-                  text-white
-                "
-              >
-                Variedad
-              </th>
+              {/* PESO */}
 
               <th
                 className="
                   border-r
-                  border-[#4D9128]
+                  border-[#009F6A]
                   px-6
                   py-3
                   text-center
                   text-sm
                   font-semibold
-                  text-white
-                "
-              >
-                Cantidad
-              </th>
-
-              <th
-                className="
-                  border-r
-                  border-[#4D9128]
-                  px-6
-                  py-3
-                  text-center
-                  text-sm
-                  font-semibold
-                  text-white
+                  text-black
                 "
               >
                 Peso
               </th>
 
-              <th
-                className="
-                  border-r
-                  border-[#4D9128]
-                  px-6
-                  py-3
-                  text-center
-                  text-sm
-                  font-semibold
-                  text-white
-                "
-              >
-                Departamento
-              </th>
+              {/* CANTIDAD */}
 
               <th
                 className="
                   border-r
-                  border-[#4D9128]
+                  border-[#009F6A]
                   px-6
                   py-3
                   text-center
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
+                "
+              >
+                Cantidad
+              </th>
+
+              {/* PRECIO */}
+
+              <th
+                className="
+                  border-r
+                  border-[#009F6A]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-black
+                "
+              >
+                Precio
+              </th>
+
+              {/* UBICACIÓN */}
+
+              <th
+                className="
+                  border-r
+                  border-[#009F6A]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-black
+                "
+              >
+                Ubicación
+              </th>
+
+              {/* ESTADO */}
+
+              <th
+                className="
+                  border-r
+                  border-[#009F6A]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-black
+                "
+              >
+                Estado
+              </th>
+
+              {/* CONTACTO */}
+
+              <th
+                className="
+                  border-r
+                  border-[#009F6A]
+                  px-6
+                  py-3
+                  text-center
+                  text-sm
+                  font-semibold
+                  text-black
                 "
               >
                 Contacto
               </th>
 
+              {/* ACTUALIZADO */}
+
               <th
                 className="
                   px-6
@@ -200,7 +335,7 @@ export default function ConsumptionTable({
                   text-center
                   text-sm
                   font-semibold
-                  text-white
+                  text-black
                 "
               >
                 Actualizado
@@ -208,174 +343,239 @@ export default function ConsumptionTable({
             </tr>
           </thead>
 
-          {/* ==================================================
+          {/* ========================================================
               DATOS
-          ================================================== */}
+          ======================================================== */}
 
           <tbody>
-            {rows.map((row) => (
-              <tr
-                key={row.id}
-                onClick={() =>
-                  goToPresentationInfo(
-                    row.presentation
-                  )
-                }
-                className="
-                  group
-                  cursor-pointer
-                  border-t
-                  border-[#292929]
-                  bg-[#0D0D0D]
-                  text-[#F5F5F5]
-                  transition-colors
-                  duration-200
-                  hover:bg-[#5FAF32]/10
-                "
-              >
-                {/* ==================================================
-                    VARIEDAD
-                ================================================== */}
+            {rows.length > 0 ? (
+              rows.map((row) => {
+                const whatsappUrl =
+                  getWhatsappUrl(
+                    row.whatsapp,
+                  );
 
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    font-medium
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.variety}
-                </td>
+                const isAvailable =
+                  row.status ===
+                  "DISPONIBLE";
 
-                {/* ==================================================
-                    CANTIDAD
-                ================================================== */}
+                const isSelected =
+                  selection.selectedPublicationId ===
+                  row.id;
 
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                    font-semibold
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.quantity}
-                </td>
-
-                {/* ==================================================
-                    PESO
-                ================================================== */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.weight}
-                </td>
-
-                {/* ==================================================
-                    DEPARTAMENTO
-                ================================================== */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                    text-[#F5F5F5]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
-                  "
-                >
-                  {row.department}
-                </td>
-
-                {/* ==================================================
-                    CONTACTO
-                ================================================== */}
-
-                <td
-                  className="
-                    border-r
-                    border-[#292929]
-                    px-6
-                    py-4
-                    text-center
-                  "
-                >
-                  <a
-                    href={
-                      row.whatsapp
-                        ? `https://wa.me/${row.whatsapp}`
-                        : "#"
+                return (
+                  <tr
+                    key={row.id}
+                    onClick={() =>
+                      actions.selectPublication(
+                        row.id,
+                      )
                     }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(event) =>
-                      event.stopPropagation()
-                    }
-                    className="
-                      inline-flex
-                      items-center
-                      rounded-lg
-                      bg-[#25D366]
-                      px-3
-                      py-2
-                      text-sm
-                      font-semibold
+                    className={`
+                      cursor-pointer
+                      border-t
+                      border-[#27272A]
                       text-white
                       transition-colors
                       duration-200
-                      hover:bg-[#20BD5A]
-                    "
+
+                      ${
+                        isSelected
+                          ? "bg-[#00BC7D]/20 ring-1 ring-inset ring-[#00BC7D]"
+                          : "bg-[#09090B] hover:bg-[#00BC7D]/10"
+                      }
+                    `}
                   >
-                    WhatsApp
-                  </a>
-                </td>
+                    {/* PESO */}
 
-                {/* ==================================================
-                    ACTUALIZADO
-                ================================================== */}
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      {row.weight} g
+                    </td>
 
+                    {/* CANTIDAD */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        text-white
+                      "
+                    >
+                      {row.quantity}
+                    </td>
+
+                    {/* PRECIO */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      S/ {row.price}
+                    </td>
+
+                    {/* UBICACIÓN */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                        text-white
+                      "
+                    >
+                      {getLocationLabel(
+                        row.department,
+                        row.location,
+                      )}
+                    </td>
+
+                    {/* ESTADO */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                      "
+                    >
+                      {isAvailable ? (
+                        <span
+                          className="
+                            inline-flex
+                            rounded-full
+                            bg-[#00BC7D]/15
+                            px-3
+                            py-1
+                            text-xs
+                            font-semibold
+                            text-[#00BC7D]
+                          "
+                        >
+                          Disponible
+                        </span>
+                      ) : (
+                        <span
+                          className="
+                            inline-flex
+                            rounded-full
+                            bg-[#EF4444]/10
+                            px-3
+                            py-1
+                            text-xs
+                            font-semibold
+                            text-[#EF4444]
+                          "
+                        >
+                          Vendido
+                        </span>
+                      )}
+                    </td>
+
+                    {/* WHATSAPP */}
+
+                    <td
+                      className="
+                        border-r
+                        border-[#27272A]
+                        px-6
+                        py-4
+                        text-center
+                      "
+                    >
+                      {whatsappUrl ? (
+                        <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(event) =>
+                            event.stopPropagation()
+                          }
+                          className="
+                            inline-flex
+                            items-center
+                            justify-center
+                            rounded-lg
+                            bg-[#00BC7D]
+                            px-3
+                            py-2
+                            text-xs
+                            font-semibold
+                            text-black
+                            transition-colors
+                            hover:bg-[#00A86F]
+                          "
+                        >
+                          WhatsApp
+                        </a>
+                      ) : (
+                        <span
+                          className="
+                            text-xs
+                            text-[#71717A]
+                          "
+                        >
+                          No disponible
+                        </span>
+                      )}
+                    </td>
+
+                    {/* ACTUALIZADO */}
+
+                    <td
+                      className="
+                        px-6
+                        py-4
+                        text-center
+                        text-[#A1A1AA]
+                      "
+                    >
+                      {row.updatedAt}
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
                 <td
+                  colSpan={7}
                   className="
                     px-6
-                    py-4
+                    py-10
                     text-center
-                    text-[#B8B8B8]
-                    transition-colors
-                    duration-200
-                    group-hover:text-[#F5F5F5]
+                    text-sm
+                    text-[#A1A1AA]
                   "
                 >
-                  {row.updatedAt}
+                  No hay publicaciones de
+                  cuyes para consumo con
+                  los filtros seleccionados.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

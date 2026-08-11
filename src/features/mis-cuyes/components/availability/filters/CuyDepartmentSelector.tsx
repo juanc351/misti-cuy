@@ -1,23 +1,21 @@
 "use client";
 
-import type { UseCuyReturn } from "../../types/cuy.hook.types";
+import type { UseCuyReturn } from "../../../types/cuy.hook.types";
 
-interface CuyCitySelectorProps {
+interface CuyDepartmentSelectorProps {
   catalog: UseCuyReturn;
 }
 
-export default function CuyCitySelector({
+export default function CuyDepartmentSelector({
   catalog,
-}: CuyCitySelectorProps) {
+}: CuyDepartmentSelectorProps) {
   const { data, filters, actions } = catalog;
 
   /* ================================================================
      DEPARTAMENTOS
-     
+
      Los departamentos se obtienen directamente
-     de las publicaciones.
-     
-     No utilizamos ciudades fijas.
+     de las publicaciones existentes.
   ================================================================= */
 
   const departments = Array.from(
@@ -49,17 +47,25 @@ export default function CuyCitySelector({
         </h2>
 
         <p className="mt-1 text-sm text-[#A1A1AA]">
-          Selecciona ela ubicacion donde deseas
+          Selecciona el departamento donde deseas
           consultar disponibilidad.
         </p>
       </div>
 
       {/* ============================================================
-          SELECTOR DE UBICACIÓN
+          SELECTOR
       ============================================================ */}
 
       <div className="px-4 pb-4">
         <select
+          value={
+            filters.selectedDepartment ?? ""
+          }
+          onChange={(event) =>
+            actions.setDepartment(
+              event.target.value || null,
+            )
+          }
           className="
             w-full
             rounded-xl
@@ -75,14 +81,6 @@ export default function CuyCitySelector({
             focus:ring-2
             focus:ring-[#00BC7D]/20
           "
-          value={
-            filters.selectedDepartment ?? ""
-          }
-          onChange={(event) =>
-            actions.setDepartment(
-              event.target.value || null,
-            )
-          }
         >
           <option
             value=""

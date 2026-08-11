@@ -26,3 +26,32 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 @import "../styles/animations.css";
+
+.admin-input {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(63 63 70);
+  background: rgb(24 24 27);
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: rgb(244 244 245);
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.admin-input::placeholder {
+  color: rgb(113 113 122);
+}
+
+.admin-input:focus {
+  border-color: rgb(16 185 129);
+  background: rgb(39 39 42);
+}
+
+.admin-input option {
+  background: rgb(24 24 27);
+  color: rgb(244 244 245);
+}

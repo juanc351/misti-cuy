@@ -11,157 +11,256 @@ export default function CuyProductGrid({
   catalog,
 }: CuyProductGridProps) {
   const {
-    data: { inventory, variants, cities },
+    data: {
+      publications,
+      profile,
+    },
     filters,
+    selection,
   } = catalog;
 
   const isConsumption =
-    filters.selectedCategory === CuyCategoryType.CONSUMO;
+    filters.selectedCategory ===
+    CuyCategoryType.CONSUMO;
 
-  const city = cities.find(
-    (city) => city.id === filters.selectedCity
-  );
+  /* ==========================================================
+     PUBLICACIÓN SELECCIONADA
+  ========================================================== */
 
-  // ==========================================================
-  // CONSUMO
-  // Busca por PRESENTACIÓN
-  // ==========================================================
+  const selectedPublication =
+    selection.selectedPublicationId
+      ? publications.find(
+          (publication) =>
+            publication.id ===
+            selection.selectedPublicationId,
+        ) ?? null
+      : null;
 
-  const consumptionItem = inventory.find(
-    (item) =>
-      item.category === CuyCategoryType.CONSUMO &&
-      item.cityId === filters.selectedCity &&
-      item.presentation === filters.selectedPresentation
-  );
+  /* ==========================================================
+     PUBLICACIONES COMPATIBLES
+  ========================================================== */
 
-  // ==========================================================
-  // REPRODUCTORES
-  // Busca por VARIEDAD
-  // ==========================================================
+  const compatiblePublications =
+    publications.filter(
+      (publication) => {
+        /* ------------------------------------------------------
+           CATEGORÍA
+        ------------------------------------------------------ */
 
-  const selectedVariant =
-    filters.selectedVariant ??
-    inventory.find(
-      (item) =>
-        item.category === CuyCategoryType.REPRODUCTOR &&
-        item.cityId === filters.selectedCity
-    )?.variantId;
+        if (
+          isConsumption &&
+          publication.type !== "CONSUMO"
+        ) {
+          return false;
+        }
 
-  const reproductiveItem = inventory.find(
-    (item) =>
-      item.category === CuyCategoryType.REPRODUCTOR &&
-      item.cityId === filters.selectedCity &&
-      item.variantId === selectedVariant
-  );
+        if (
+          !isConsumption &&
+          publication.type !== "REPRODUCTOR"
+        ) {
+          return false;
+        }
 
-  const variant = variants.find(
-    (variant) => variant.id === selectedVariant
-  );
+        /* ------------------------------------------------------
+           DEPARTAMENTO
+        ------------------------------------------------------ */
 
-  const item = isConsumption
-    ? consumptionItem
-    : reproductiveItem;
+        if (
+          filters.selectedDepartment &&
+          publication.department
+            .trim()
+            .toLowerCase() !==
+            filters.selectedDepartment
+              .trim()
+              .toLowerCase()
+        ) {
+          return false;
+        }
 
-  // ==========================================================
-  // SIN DISPONIBILIDAD
-  // ==========================================================
+        /* ------------------------------------------------------
+           ESTADO
+        ------------------------------------------------------ */
 
-  if (!item) {
+        if (
+          filters.selectedStatus !== "ALL" &&
+          publication.status !==
+            filters.selectedStatus
+        ) {
+          return false;
+        }
+
+        return true;
+      },
+    );
+
+  /* ==========================================================
+     PUBLICACIÓN ACTUAL
+  ========================================================== */
+
+  const currentPublication =
+    selectedPublication &&
+    compatiblePublications.some(
+      (publication) =>
+        publication.id ===
+        selectedPublication.id,
+    )
+      ? selectedPublication
+      : compatiblePublications[0] ?? null;
+
+  /* ==========================================================
+     WHATSAPP
+  ========================================================== */
+
+  const getWhatsappUrl = (
+    phone: string,
+  ) => {
+    const cleanPhone =
+      phone.replace(/\D/g, "");
+
+    if (!cleanPhone) {
+      return null;
+    }
+
+    return `https://wa.me/${cleanPhone}`;
+  };
+
+  const whatsappUrl =
+    getWhatsappUrl(
+      profile?.phone ?? "",
+    );
+
+  /* ==========================================================
+     SIN PUBLICACIONES
+  ========================================================== */
+
+  if (!currentPublication) {
     return (
-      <section className="bg-[#0D0D0D] p-4 md:p-6">
-        <div
-          className="
-            rounded-xl
-            border
-            border-[#292929]
-            bg-[#11110F]
-            p-5
-            text-sm
-            text-[#B8B8B8]
-          "
-        >
-          No existe disponibilidad para la selección actual.
+      <section className="w-full">
+        <div className="px-4 py-5 md:px-6">
+          <h2 className="text-lg font-bold text-white">
+            Ejemplares disponibles
+          </h2>
+
+          <p className="mt-1 text-sm text-[#A1A1AA]">
+            No existen publicaciones para la
+            selección actual.
+          </p>
         </div>
       </section>
     );
   }
 
+  /* ==========================================================
+     REPRODUCTORES
+  ========================================================== */
+
+  if (
+    currentPublication.type ===
+    "REPRODUCTOR"
+  ) {
+    const title =
+      currentPublication.sex === "MACHO"
+        ? "Macho reproductor"
+        : "Hembra reproductora";
+
+    const variety =
+      currentPublication.line?.trim()
+        ? `Línea - ${currentPublication.line}`
+        : currentPublication.breed;
+
+    return (
+      <section className="w-full">
+        {/* ====================================================
+            ENCABEZADO
+        ==================================================== */}
+
+        <div className="px-4 py-5 md:px-6">
+          <h2 className="text-lg font-bold text-white">
+            Ejemplares disponibles
+          </h2>
+
+          <p className="mt-1 text-sm text-[#A1A1AA]">
+            Disponibilidad actual según la selección
+            realizada.
+          </p>
+        </div>
+
+        {/* ====================================================
+            PRESENTACIÓN ANTERIOR
+        ==================================================== */}
+
+        <div className="space-y-3 p-4 md:space-y-4 md:p-6">
+          <ProductCard
+            title={title}
+            quantity={`${currentPublication.quantity} disponibles`}
+            detail1={`Raza / Línea: ${variety || "-"}`}
+            detail2={`Precio: S/ ${currentPublication.price}`}
+            detail3={`Ubicación: ${
+              currentPublication.department?.trim() ||
+              profile?.department?.trim() ||
+              "-"
+            }`}
+            whatsappUrl={whatsappUrl}
+          />
+        </div>
+      </section>
+    );
+  }
+
+  /* ==========================================================
+     CONSUMO
+  ========================================================== */
+
   return (
-    <section
-      className="
-        bg-[#0D0D0D]
-        text-[#F5F5F5]
-      "
-    >
-      {/* ======================================================
+    <section className="w-full">
+      {/* ====================================================
           ENCABEZADO
-      ====================================================== */}
+      ==================================================== */}
 
       <div className="px-4 py-5 md:px-6">
-        <h2 className="text-lg font-bold text-[#F5F5F5]">
-          Ejemplares Disponibles
+        <h2 className="text-lg font-bold text-white">
+          Ejemplares disponibles
         </h2>
 
-        <p className="mt-1 text-sm text-[#B8B8B8]">
-          Disponibilidad actual según la selección realizada.
+        <p className="mt-1 text-sm text-[#A1A1AA]">
+          Disponibilidad actual según la selección
+          realizada.
         </p>
       </div>
 
-      {/* ======================================================
-          PRODUCTOS
-      ====================================================== */}
+      {/* ====================================================
+          PRESENTACIÓN ANTERIOR
+      ==================================================== */}
 
-      <div className="space-y-3 p-4 md:space-y-4 md:p-6">
-        {isConsumption ? (
-          <ProductCard
-            title={item.presentation ?? "-"}
-            quantity={`${item.quantity ?? 0} disponibles`}
-            detail1={`Peso promedio: ${
-              item.averageWeight ?? "-"
-            } g`}
-            detail2={`Ubicación: ${
-              city?.district ?? "-"
-            }, ${city?.name ?? "-"}`}
-          />
-        ) : (
-          <>
-            <ProductCard
-              title="Machos Reproductores"
-              quantity={`${item.males ?? 0} disponibles`}
-              detail1={`Edad: ${
-                item.ageRange ?? "-"
-              }`}
-              detail2={`Línea: ${
-                variant?.name ?? "-"
-              }`}
-            />
-
-            <ProductCard
-              title="Hembras Reproductoras"
-              quantity={`${item.females ?? 0} disponibles`}
-              detail1={`Edad: ${
-                item.ageRange ?? "-"
-              }`}
-              detail2={`Línea: ${
-                variant?.name ?? "-"
-              }`}
-            />
-          </>
-        )}
+      <div className="space-y-3 p-4 md:space-y-4">
+        <ProductCard
+          title={`${currentPublication.weight} g`}
+          quantity={`${currentPublication.quantity} disponibles`}
+          detail1={`Peso: ${currentPublication.weight} g`}
+          detail2={`Precio: S/ ${currentPublication.price}`}
+          detail3={`Ubicación: ${
+            currentPublication.department?.trim() ||
+            profile?.department?.trim() ||
+            "-"
+          }`}
+          whatsappUrl={whatsappUrl}
+        />
       </div>
     </section>
   );
 }
 
-// ==========================================================
-// TARJETA DE PRODUCTO
-// ==========================================================
+/* ================================================================
+   TARJETA DE PRODUCTO
+================================================================ */
 
 interface ProductCardProps {
   title: string;
   quantity: string;
   detail1: string;
   detail2: string;
+  detail3: string;
+  whatsappUrl: string | null;
 }
 
 function ProductCard({
@@ -169,26 +268,25 @@ function ProductCard({
   quantity,
   detail1,
   detail2,
+  detail3,
+  whatsappUrl,
 }: ProductCardProps) {
   return (
     <article
       className="
-        rounded-xl
+        rounded-2xl
         border
         border-[#292929]
         bg-[#11110F]
-        p-4
-        transition-colors
-        duration-200
-        hover:border-[#5FAF32]/50
-        md:p-5
+        p-5
+        md:p-6
       "
     >
       {/* ==================================================
           TÍTULO
       ================================================== */}
 
-      <h3 className="text-base font-semibold text-[#F5F5F5]">
+      <h3 className="text-base font-semibold text-white">
         {title}
       </h3>
 
@@ -216,35 +314,44 @@ function ProductCard({
           mt-4
           space-y-1
           text-sm
-          text-[#B8B8B8]
+          text-[#A1A1AA]
         "
       >
         <p>{detail1}</p>
         <p>{detail2}</p>
+        <p>{detail3}</p>
       </div>
 
       {/* ==================================================
-          BOTÓN
+          WHATSAPP
       ================================================== */}
 
-      <button
-        type="button"
-        className="
-          mt-5
-          w-full
-          rounded-xl
-          bg-[#5FAF32]
-          px-4
-          py-3
-          font-semibold
-          text-white
-          transition-colors
-          duration-200
-          hover:bg-[#4D9F25]
-        "
-      >
-        Consultar disponibilidad
-      </button>
+      {whatsappUrl && (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            mt-5
+            flex
+            w-full
+            items-center
+            justify-center
+            rounded-xl
+            bg-[#00BC7D]
+            px-4
+            py-3
+            text-sm
+            font-semibold
+            text-black
+            transition-colors
+            duration-200
+            hover:bg-[#00A86F]
+          "
+        >
+          Consultar por WhatsApp
+        </a>
+      )}
     </article>
   );
 }

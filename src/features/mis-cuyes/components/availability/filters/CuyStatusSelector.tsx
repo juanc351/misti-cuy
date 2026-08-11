@@ -1,26 +1,29 @@
 "use client";
 
-import type { UseCuyReturn } from "../../types/cuy.hook.types";
-import { CuyCategoryType } from "../../types/cuy.types";
+import type { UseCuyReturn } from "../../../types/cuy.hook.types";
 
-interface CuyCategorySelectorProps {
+interface CuyStatusSelectorProps {
   catalog: UseCuyReturn;
 }
 
-const categories = [
+const statuses = [
   {
-    id: CuyCategoryType.REPRODUCTOR,
-    label: "Reproductores",
+    id: "ALL" as const,
+    label: "Todos",
   },
   {
-    id: CuyCategoryType.CONSUMO,
-    label: "Consumo",
+    id: "DISPONIBLE" as const,
+    label: "Disponible",
+  },
+  {
+    id: "NO_DISPONIBLE" as const,
+    label: "Vendido",
   },
 ];
 
-export default function CuyCategorySelector({
+export default function CuyStatusSelector({
   catalog,
-}: CuyCategorySelectorProps) {
+}: CuyStatusSelectorProps) {
   const { filters, actions } = catalog;
 
   return (
@@ -31,11 +34,11 @@ export default function CuyCategorySelector({
 
       <div className="px-4 py-4">
         <h2 className="text-sm font-semibold text-white">
-          Categoría
+          Estado
         </h2>
 
         <p className="mt-1 text-sm text-[#A1A1AA]">
-          Selecciona el tipo de cuyes que deseas consultar.
+          Filtra las publicaciones según su disponibilidad.
         </p>
       </div>
 
@@ -54,24 +57,24 @@ export default function CuyCategorySelector({
             p-1
           "
         >
-          {categories.map((category) => {
+          {statuses.map((status) => {
             const active =
-              filters.selectedCategory ===
-              category.id;
+              filters.selectedStatus ===
+              status.id;
 
             return (
               <button
-                key={category.id}
+                key={status.id}
                 type="button"
                 onClick={() =>
-                  actions.setCategory(
-                    category.id,
+                  actions.setStatus(
+                    status.id,
                   )
                 }
                 className={`
                   flex-1
                   rounded-lg
-                  px-5
+                  px-4
                   py-3
                   text-sm
                   font-semibold
@@ -92,7 +95,7 @@ export default function CuyCategorySelector({
                   }
                 `}
               >
-                {category.label}
+                {status.label}
               </button>
             );
           })}
