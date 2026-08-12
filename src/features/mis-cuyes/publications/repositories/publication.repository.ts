@@ -60,6 +60,35 @@ export async function createPublication(
 }
 
 /* ================================================================
+   ELIMINAR PUBLICACIÓN
+================================================================ */
+
+export async function deletePublication(
+  id: string,
+): Promise<boolean> {
+  if (!id.trim()) {
+    throw new Error(
+      "El ID de la publicación es obligatorio.",
+    );
+  }
+
+  const publicationRef = db
+    .collection(COLLECTION)
+    .doc(id);
+
+  const snapshot =
+    await publicationRef.get();
+
+  if (!snapshot.exists) {
+    return false;
+  }
+
+  await publicationRef.delete();
+
+  return true;
+}
+
+/* ================================================================
    OBTENER UNA PUBLICACIÓN
 ================================================================ */
 
@@ -98,26 +127,6 @@ export async function getPublication(
 /* ================================================================
    OBTENER PUBLICACIONES
 ================================================================ */
-
-/*
- * Permite consultar publicaciones utilizando:
- *
- * - department
- * - status
- *
- * Ambos filtros son opcionales.
- *
- * Ejemplo:
- *
- * getPublications({
- *   department: "Arequipa",
- *   status: "DISPONIBLE",
- * });
- *
- * Firestore devolverá únicamente
- * las publicaciones que cumplan
- * esas condiciones.
- */
 
 export async function getPublications(
   filters: PublicationFilters = {},
@@ -182,24 +191,6 @@ export async function getPublications(
    ACTUALIZAR CANTIDAD Y PRECIO
 ================================================================ */
 
-/*
- * REGLAS:
- *
- * - Solo DISPONIBLE puede editarse.
- * - La cantidad puede mantenerse.
- * - La cantidad puede disminuir.
- * - La cantidad puede llegar a 0.
- * - La cantidad NO puede aumentar.
- * - El precio debe ser mayor que 0.
- *
- * Si quantity === 0:
- *
- * status = NO_DISPONIBLE
- *
- * Una publicación NO_DISPONIBLE
- * no puede volver a editarse.
- */
-
 export async function updatePublication(
   id: string,
   quantity: number,
@@ -233,10 +224,6 @@ export async function updatePublication(
   const currentStatus =
     currentData.status as PublicationStatus;
 
-  /* ==============================================================
-     BLOQUEAR PUBLICACIONES NO DISPONIBLES
-  ============================================================== */
-
   if (currentStatus !== "DISPONIBLE") {
     throw new Error(
       "Esta publicación no está disponible y no puede ser editada.",
@@ -247,10 +234,6 @@ export async function updatePublication(
     Number(
       currentData.quantity ?? 0,
     );
-
-  /* ==============================================================
-     VALIDAR CANTIDAD
-  ============================================================== */
 
   if (!Number.isInteger(quantity)) {
     throw new Error(
@@ -264,19 +247,11 @@ export async function updatePublication(
     );
   }
 
-  /* ==============================================================
-     NO PERMITIR AUMENTAR
-  ============================================================== */
-
   if (quantity > currentQuantity) {
     throw new Error(
       `La cantidad no puede aumentar. Actualmente hay ${currentQuantity} unidades disponibles.`,
     );
   }
-
-  /* ==============================================================
-     VALIDAR PRECIO
-  ============================================================== */
 
   if (
     !Number.isFinite(price) ||
@@ -287,18 +262,10 @@ export async function updatePublication(
     );
   }
 
-  /* ==============================================================
-     NUEVO ESTADO
-  ============================================================== */
-
   const newStatus: PublicationStatus =
     quantity === 0
       ? "NO_DISPONIBLE"
       : "DISPONIBLE";
-
-  /* ==============================================================
-     ACTUALIZAR FIRESTORE
-  ============================================================== */
 
   const now = new Date();
 
@@ -308,10 +275,6 @@ export async function updatePublication(
     status: newStatus,
     updatedAt: now,
   });
-
-  /* ==============================================================
-     DEVOLVER PUBLICACIÓN ACTUALIZADA
-  ============================================================== */
 
   const updatedSnapshot =
     await publicationRef.get();
@@ -365,10 +328,6 @@ export async function updatePublicationQuantity(
   const currentStatus =
     currentData.status as PublicationStatus;
 
-  /* ==============================================================
-     BLOQUEAR PUBLICACIONES NO DISPONIBLES
-  ============================================================== */
-
   if (currentStatus !== "DISPONIBLE") {
     throw new Error(
       "Esta publicación no está disponible y no puede ser editada.",
@@ -379,10 +338,6 @@ export async function updatePublicationQuantity(
     Number(
       currentData.quantity ?? 0,
     );
-
-  /* ==============================================================
-     VALIDAR CANTIDAD
-  ============================================================== */
 
   if (!Number.isInteger(quantity)) {
     throw new Error(
@@ -396,28 +351,16 @@ export async function updatePublicationQuantity(
     );
   }
 
-  /* ==============================================================
-     NO PERMITIR AUMENTAR
-  ============================================================== */
-
   if (quantity > currentQuantity) {
     throw new Error(
       `La cantidad no puede aumentar. Actualmente hay ${currentQuantity} unidades disponibles.`,
     );
   }
 
-  /* ==============================================================
-     NUEVO ESTADO
-  ============================================================== */
-
   const newStatus: PublicationStatus =
     quantity === 0
       ? "NO_DISPONIBLE"
       : "DISPONIBLE";
-
-  /* ==============================================================
-     ACTUALIZAR FIRESTORE
-  ============================================================== */
 
   const now = new Date();
 
@@ -426,10 +369,6 @@ export async function updatePublicationQuantity(
     status: newStatus,
     updatedAt: now,
   });
-
-  /* ==============================================================
-     DEVOLVER PUBLICACIÓN ACTUALIZADA
-  ============================================================== */
 
   const updatedSnapshot =
     await publicationRef.get();
@@ -485,10 +424,6 @@ export async function updatePublicationStatus(
       currentData.quantity ?? 0,
     );
 
-  /* ==============================================================
-     NO REACTIVAR SIN STOCK
-  ============================================================== */
-
   if (
     status === "DISPONIBLE" &&
     currentQuantity <= 0
@@ -498,20 +433,12 @@ export async function updatePublicationStatus(
     );
   }
 
-  /* ==============================================================
-     ACTUALIZAR ESTADO
-  ============================================================== */
-
   const now = new Date();
 
   await publicationRef.update({
     status,
     updatedAt: now,
   });
-
-  /* ==============================================================
-     DEVOLVER PUBLICACIÓN ACTUALIZADA
-  ============================================================== */
 
   const updatedSnapshot =
     await publicationRef.get();
@@ -550,13 +477,6 @@ function normalizePublication(
       data.price ?? 0,
     ),
 
-    /*
-     * Departamento de la publicación.
-     *
-     * Se utiliza para el filtrado
-     * y para mostrar la ubicación
-     * general en la página pública.
-     */
     department: String(
       data.department ?? "",
     ),
@@ -578,10 +498,6 @@ function normalizePublication(
         data.updatedAt,
       ),
   };
-
-  /* ==============================================================
-     REPRODUCTOR
-  ============================================================== */
 
   if (
     data.type === "REPRODUCTOR"
@@ -615,10 +531,6 @@ function normalizePublication(
       sex: data.sex,
     } as Publication;
   }
-
-  /* ==============================================================
-     CONSUMO
-  ============================================================== */
 
   return {
     ...base,

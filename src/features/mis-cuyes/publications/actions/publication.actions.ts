@@ -2,6 +2,7 @@
 
 import {
   createPublicationData,
+  deletePublicationData,
   getPublicationData,
   getPublicationsData,
   updatePublicationData,
@@ -43,6 +44,16 @@ export async function getPublicationAction(
   id: string,
 ): Promise<Publication | null> {
   return getPublicationData(id);
+}
+
+/* ================================================================
+   ELIMINAR PUBLICACIÓN
+================================================================ */
+
+export async function deletePublicationAction(
+  id: string,
+): Promise<boolean> {
+  return deletePublicationData(id);
 }
 
 /* ================================================================

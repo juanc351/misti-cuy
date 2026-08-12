@@ -1,9 +1,44 @@
 import Link from "next/link";
 
-const WHATSAPP_URL =
-  "https://wa.me/51999999999?text=Hola,%20quiero%20consultar%20la%20promoción%20de%20cuyes";
+export interface CuyCampaignData {
+  type: "PRODUCTO" | "EVENTO" | "CAMPAÑA" | "AVISO";
+  title: string;
+  subtitle?: string;
+  description?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  buttonText?: string;
+  buttonAction?: "WHATSAPP" | "LINK" | "NONE";
+  buttonUrl?: string;
+  active: boolean;
+  startDate?: string;
+  endDate?: string;
+}
 
-export default function CuyCampaign() {
+interface CuyCampaignProps {
+  campaign?: CuyCampaignData | null;
+}
+
+export default function CuyCampaign({
+  campaign,
+}: CuyCampaignProps) {
+  /* ============================================================
+     SIN CARTILLA ACTIVA
+  ============================================================ */
+
+  if (!campaign || !campaign.active) {
+    return null;
+  }
+
+  /* ============================================================
+     BOTÓN
+  ============================================================ */
+
+  const showButton =
+    campaign.buttonAction &&
+    campaign.buttonAction !== "NONE" &&
+    campaign.buttonText;
+
   return (
     <section className="bg-[#0D0D0D]">
       <div
@@ -22,9 +57,9 @@ export default function CuyCampaign() {
           md:p-6
         "
       >
-        {/* =====================================
+        {/* =====================================================
             INFORMACIÓN
-        ====================================== */}
+        ===================================================== */}
 
         <div>
           <span
@@ -41,60 +76,111 @@ export default function CuyCampaign() {
               text-[#5FAF32]
             "
           >
-            Promoción
+            {campaign.type}
           </span>
 
-          <h2 className="mt-3 text-2xl font-bold text-[#F5F5F5]">
-            Lleva 5 cuyes y obtén un precio especial
+          {campaign.subtitle && (
+            <p
+              className="
+                mt-3
+                text-sm
+                font-medium
+                text-[#5FAF32]
+              "
+            >
+              {campaign.subtitle}
+            </p>
+          )}
+
+          <h2
+            className="
+              mt-2
+              text-2xl
+              font-bold
+              text-[#F5F5F5]
+            "
+          >
+            {campaign.title}
           </h2>
 
-          <p
-            className="
-              mt-3
-              max-w-2xl
-              text-sm
-              leading-7
-              text-[#B8B8B8]
-            "
-          >
-            Consulta nuestras promociones vigentes para
-            reproductores y cuyes de consumo. Las campañas
-            cambian según la temporada y la disponibilidad
-            de la granja.
-          </p>
+          {campaign.description && (
+            <p
+              className="
+                mt-3
+                max-w-2xl
+                text-sm
+                leading-7
+                text-[#B8B8B8]
+              "
+            >
+              {campaign.description}
+            </p>
+          )}
         </div>
 
-        {/* =====================================
+        {/* =====================================================
             BOTÓN
-        ====================================== */}
+        ===================================================== */}
 
-        <div className="flex-shrink-0">
-          <Link
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              inline-flex
-              w-full
-              items-center
-              justify-center
-              rounded-xl
-              bg-[#5FAF32]
-              px-6
-              py-3
-              font-semibold
-              text-white
-              transition-all
-              duration-200
-              hover:bg-[#4D9F25]
-              hover:-translate-y-0.5
-              hover:shadow-lg
-              md:w-auto
-            "
-          >
-            Consultar promoción
-          </Link>
-        </div>
+        {showButton && (
+          <div className="shrink-0">
+            {campaign.buttonAction === "LINK" &&
+            campaign.buttonUrl ? (
+              <Link
+                href={campaign.buttonUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  inline-flex
+                  w-full
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-[#5FAF32]
+                  px-6
+                  py-3
+                  font-semibold
+                  text-white
+                  transition-all
+                  duration-200
+                  hover:-translate-y-0.5
+                  hover:bg-[#4D9F25]
+                  hover:shadow-lg
+                  md:w-auto
+                "
+              >
+                {campaign.buttonText}
+              </Link>
+            ) : campaign.buttonAction === "WHATSAPP" &&
+              campaign.buttonUrl ? (
+              <Link
+                href={campaign.buttonUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  inline-flex
+                  w-full
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-[#5FAF32]
+                  px-6
+                  py-3
+                  font-semibold
+                  text-white
+                  transition-all
+                  duration-200
+                  hover:-translate-y-0.5
+                  hover:bg-[#4D9F25]
+                  hover:shadow-lg
+                  md:w-auto
+                "
+              >
+                {campaign.buttonText}
+              </Link>
+            ) : null}
+          </div>
+        )}
       </div>
     </section>
   );

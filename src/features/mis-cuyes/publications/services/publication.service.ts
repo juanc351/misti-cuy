@@ -2,6 +2,7 @@ import "server-only";
 
 import {
   createPublication,
+  deletePublication,
   getPublication,
   getPublications,
   updatePublication,
@@ -27,21 +28,6 @@ import {
    OBTENER PUBLICACIONES
 ================================================================ */
 
-/**
- * Obtiene las publicaciones comerciales.
- *
- * Los filtros son opcionales.
- *
- * Ejemplo:
- *
- * getPublicationsData({
- *   department: "Arequipa",
- *   status: "DISPONIBLE",
- * });
- *
- * Esto permite que Firestore filtre
- * antes de enviar los datos al frontend.
- */
 export async function getPublicationsData(
   filters: PublicationFilters = {},
 ): Promise<Publication[]> {
@@ -81,34 +67,43 @@ export async function createPublicationData(
       cleanData,
     );
 
-  /*
-   * La publicación ya fue guardada
-   * correctamente en Firestore.
-   *
-   * Ahora invalidamos la caché
-   * pública de Mis Cuyes.
-   */
   await revalidateMisCuyesPublicData();
 
   return publication;
 }
 
 /* ================================================================
+   ELIMINAR PUBLICACIÓN
+================================================================ */
+
+export async function deletePublicationData(
+  id: string,
+): Promise<boolean> {
+  if (!id.trim()) {
+    throw new Error(
+      "El ID de la publicación es obligatorio.",
+    );
+  }
+
+  const deleted =
+    await deletePublication(id);
+
+  /*
+   * Si realmente se eliminó,
+   * invalidamos la caché pública
+   * para que desaparezca del sitio.
+   */
+  if (deleted) {
+    await revalidateMisCuyesPublicData();
+  }
+
+  return deleted;
+}
+
+/* ================================================================
    ACTUALIZAR CANTIDAD Y PRECIO
 ================================================================ */
 
-/**
- * Reglas:
- *
- * - La cantidad puede mantenerse.
- * - La cantidad puede disminuir.
- * - La cantidad puede llegar a 0.
- * - La cantidad NO puede aumentar.
- * - Si la cantidad llega a 0,
- *   el repository cambia automáticamente
- *   el estado a NO_DISPONIBLE.
- * - El precio debe ser mayor que 0.
- */
 export async function updatePublicationData(
   id: string,
   quantity: number,
@@ -140,11 +135,6 @@ export async function updatePublicationData(
       price,
     );
 
-  /*
-   * Solo invalidamos la caché
-   * si realmente se actualizó
-   * una publicación.
-   */
   if (publication) {
     await revalidateMisCuyesPublicData();
   }
@@ -176,10 +166,6 @@ export async function updatePublicationQuantityData(
       quantity,
     );
 
-  /*
-   * Invalidar solamente si
-   * la actualización fue exitosa.
-   */
   if (publication) {
     await revalidateMisCuyesPublicData();
   }
@@ -209,10 +195,6 @@ export async function updatePublicationStatusData(
       status,
     );
 
-  /*
-   * Invalidar solamente si
-   * la actualización fue exitosa.
-   */
   if (publication) {
     await revalidateMisCuyesPublicData();
   }
@@ -227,19 +209,11 @@ export async function updatePublicationStatusData(
 function validatePublication(
   data: CreatePublicationInput,
 ): void {
-  /* ==============================================================
-     TIPO
-  ============================================================== */
-
   if (!data.type) {
     throw new Error(
       "El tipo de publicación es obligatorio.",
     );
   }
-
-  /* ==============================================================
-     DEPARTAMENTO
-  ============================================================== */
 
   if (!data.department?.trim()) {
     throw new Error(
@@ -247,17 +221,9 @@ function validatePublication(
     );
   }
 
-  /* ==============================================================
-     CANTIDAD
-  ============================================================== */
-
   validateQuantity(
     data.quantity,
   );
-
-  /* ==============================================================
-     PRECIO
-  ============================================================== */
 
   if (
     !Number.isFinite(data.price) ||
@@ -268,20 +234,12 @@ function validatePublication(
     );
   }
 
-  /* ==============================================================
-     REPRODUCTOR
-  ============================================================== */
-
   if (
     data.type ===
     "REPRODUCTOR"
   ) {
     validateReproductor(data);
   }
-
-  /* ==============================================================
-     CONSUMO
-  ============================================================== */
 
   if (
     data.type ===
@@ -314,11 +272,6 @@ function validateReproductor(
       "El sexo es obligatorio.",
     );
   }
-
-  /*
-   * line y predominantColor
-   * son opcionales.
-   */
 }
 
 /* ================================================================
@@ -348,13 +301,6 @@ function validateConsumo(
    VALIDAR CANTIDAD DE NUEVA PUBLICACIÓN
 ================================================================ */
 
-/**
- * Para crear:
- *
- * - 0 = no permitido.
- * - Debe existir al menos
- *   una unidad disponible.
- */
 function validateQuantity(
   quantity: number,
 ): void {
@@ -372,17 +318,6 @@ function validateQuantity(
    VALIDAR CANTIDAD EN ACTUALIZACIÓN
 ================================================================ */
 
-/**
- * Para actualizar:
- *
- * - 0 = permitido.
- * - Esto significa que se agotaron
- *   todas las unidades.
- *
- * La regla de que NO pueda aumentar
- * se comprueba contra Firestore
- * en el repository.
- */
 function validateUpdateQuantity(
   quantity: number,
 ): void {
@@ -428,12 +363,6 @@ function cleanPublicationData(
   data: CreatePublicationInput,
 ): CreatePublicationInput {
   const base = {
-    /*
-     * Departamento:
-     *
-     * Se guarda directamente en cada publicación
-     * para poder filtrar en Firestore.
-     */
     department:
       data.department.trim(),
 
@@ -467,10 +396,6 @@ function cleanPublicationData(
       sex:
         data.sex,
 
-      /*
-       * Solo guardamos line
-       * si tiene contenido.
-       */
       ...(data.line?.trim()
         ? {
             line:
@@ -478,10 +403,6 @@ function cleanPublicationData(
           }
         : {}),
 
-      /*
-       * Solo guardamos color
-       * si tiene contenido.
-       */
       ...(data.predominantColor?.trim()
         ? {
             predominantColor:

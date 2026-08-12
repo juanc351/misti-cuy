@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
+  deletePublicationAction,
   updatePublicationAction,
   updatePublicationStatusAction,
 } from "@/features/mis-cuyes/publications/actions/publication.actions";
 
 /* ================================================================
    TIPOS
-   ================================================================ */
+================================================================ */
 
 interface PublicationActionsProps {
   id: string;
@@ -27,7 +28,7 @@ interface PublicationActionsProps {
 
 /* ================================================================
    COMPONENTE
-   ================================================================ */
+================================================================ */
 
 export default function PublicationActions({
   id,
@@ -37,25 +38,21 @@ export default function PublicationActions({
 }: PublicationActionsProps) {
   const router = useRouter();
 
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] =
+    useState(false);
 
-  const [editedQuantity, setEditedQuantity] = useState(
-    String(quantity),
-  );
+  const [editedQuantity, setEditedQuantity] =
+    useState(String(quantity));
 
-  const [editedPrice, setEditedPrice] = useState(
-    String(price),
-  );
+  const [editedPrice, setEditedPrice] =
+    useState(String(price));
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
   /* ================================================================
      REGLA DE EDICIÓN
-
-     Solamente se puede editar una publicación que:
-     - esté DISPONIBLE
-     - tenga más de 0 unidades
-     ================================================================ */
+  ================================================================ */
 
   const canEdit =
     status === "DISPONIBLE" &&
@@ -63,47 +60,62 @@ export default function PublicationActions({
 
   /* ================================================================
      INICIAR EDICIÓN
-     ================================================================ */
+  ================================================================ */
 
   function handleStartEditing() {
     if (loading || !canEdit) {
       return;
     }
 
-    setEditedQuantity(String(quantity));
-    setEditedPrice(String(price));
+    setEditedQuantity(
+      String(quantity),
+    );
+
+    setEditedPrice(
+      String(price),
+    );
+
     setEditing(true);
   }
 
   /* ================================================================
      CANCELAR EDICIÓN
-     ================================================================ */
+  ================================================================ */
 
   function handleCancelEditing() {
     if (loading) {
       return;
     }
 
-    setEditedQuantity(String(quantity));
-    setEditedPrice(String(price));
+    setEditedQuantity(
+      String(quantity),
+    );
+
+    setEditedPrice(
+      String(price),
+    );
+
     setEditing(false);
   }
 
   /* ================================================================
      GUARDAR CAMBIOS
-     ================================================================ */
+  ================================================================ */
 
   async function handleSave() {
     if (loading || !canEdit) {
       return;
     }
 
-    const newQuantity = Number(editedQuantity);
-    const newPrice = Number(editedPrice);
+    const newQuantity =
+      Number(editedQuantity);
+
+    const newPrice =
+      Number(editedPrice);
 
     /* ============================================================
        VALIDAR CANTIDAD
-       ============================================================ */
+    ============================================================ */
 
     if (
       !Number.isInteger(newQuantity) ||
@@ -117,8 +129,8 @@ export default function PublicationActions({
     }
 
     /* ============================================================
-       NO PERMITIR AUMENTAR CANTIDAD
-       ============================================================ */
+       NO PERMITIR AUMENTAR
+    ============================================================ */
 
     if (newQuantity > quantity) {
       window.alert(
@@ -130,7 +142,7 @@ export default function PublicationActions({
 
     /* ============================================================
        VALIDAR PRECIO
-       ============================================================ */
+    ============================================================ */
 
     if (
       !Number.isFinite(newPrice) ||
@@ -181,7 +193,7 @@ export default function PublicationActions({
 
   /* ================================================================
      MARCAR COMO NO DISPONIBLE
-     ================================================================ */
+  ================================================================ */
 
   async function handleNoDisponible() {
     if (
@@ -234,16 +246,62 @@ export default function PublicationActions({
   }
 
   /* ================================================================
+     ELIMINAR PUBLICACIÓN
+  ================================================================ */
+
+  async function handleDelete() {
+    if (loading) {
+      return;
+    }
+
+    const confirmar =
+      window.confirm(
+        "¿Estás seguro de que quieres eliminar esta publicación?\n\nEsta acción no se puede deshacer.",
+      );
+
+    if (!confirmar) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const deleted =
+        await deletePublicationAction(id);
+
+      if (!deleted) {
+        throw new Error(
+          "No se encontró la publicación.",
+        );
+      }
+
+      router.refresh();
+    } catch (error) {
+      console.error(
+        "Error al eliminar la publicación:",
+        error,
+      );
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No se pudo eliminar la publicación.";
+
+      window.alert(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /* ================================================================
      MODO EDICIÓN
-     ================================================================ */
+  ================================================================ */
 
   if (editing) {
     return (
       <div className="flex items-center gap-2">
 
-        {/* ========================================================
-           CANTIDAD
-           ======================================================== */}
+        {/* CANTIDAD */}
 
         <input
           type="number"
@@ -261,11 +319,10 @@ export default function PublicationActions({
           className="h-9 w-20 rounded-lg border border-zinc-700 bg-zinc-950 px-2 text-center text-xs font-medium text-zinc-100 outline-none transition-colors focus:border-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
         />
 
-        {/* ========================================================
-           PRECIO
-           ======================================================== */}
+        {/* PRECIO */}
 
         <div className="flex h-9 w-28 overflow-hidden rounded-lg border border-zinc-700 bg-zinc-950">
+
           <span className="flex items-center border-r border-zinc-700 px-2 text-xs text-zinc-500">
             S/
           </span>
@@ -284,11 +341,10 @@ export default function PublicationActions({
             aria-label="Precio"
             className="min-w-0 flex-1 bg-transparent px-2 text-xs font-medium text-zinc-100 outline-none disabled:cursor-not-allowed disabled:opacity-50"
           />
+
         </div>
 
-        {/* ========================================================
-           GUARDAR
-           ======================================================== */}
+        {/* GUARDAR */}
 
         <button
           type="button"
@@ -301,9 +357,7 @@ export default function PublicationActions({
             : "Guardar"}
         </button>
 
-        {/* ========================================================
-           CANCELAR
-           ======================================================== */}
+        {/* CANCELAR */}
 
         <button
           type="button"
@@ -313,20 +367,19 @@ export default function PublicationActions({
         >
           Cancelar
         </button>
+
       </div>
     );
   }
 
   /* ================================================================
      MODO NORMAL
-     ================================================================ */
+  ================================================================ */
 
   return (
     <div className="flex items-center gap-2">
 
-      {/* ==========================================================
-         ACTUALIZAR
-         ========================================================== */}
+      {/* ACTUALIZAR */}
 
       <button
         type="button"
@@ -340,9 +393,7 @@ export default function PublicationActions({
         Actualizar
       </button>
 
-      {/* ==========================================================
-         NO DISPONIBLE
-         ========================================================== */}
+      {/* NO DISPONIBLE */}
 
       <button
         type="button"
@@ -351,7 +402,7 @@ export default function PublicationActions({
           loading ||
           status === "NO_DISPONIBLE"
         }
-        className="min-h-9 rounded-lg border border-red-500/20 bg-red-500/5 px-3 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+        className="min-h-9 rounded-lg border border-red-500/20 bg-red-500/5 px-3 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {status === "NO_DISPONIBLE"
           ? "No disponible"
@@ -359,6 +410,20 @@ export default function PublicationActions({
             ? "Actualizando..."
             : "No disponible"}
       </button>
+
+      {/* ELIMINAR */}
+
+      <button
+        type="button"
+        onClick={handleDelete}
+        disabled={loading}
+        className="min-h-9 rounded-lg border border-red-500/30 bg-red-500/5 px-3 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {loading
+          ? "Eliminando..."
+          : "Eliminar"}
+      </button>
+
     </div>
   );
 }
