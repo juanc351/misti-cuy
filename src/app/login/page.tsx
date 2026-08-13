@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import {
-  GoogleAuthProvider,
-  signInWithPopup,
+  signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 
 import { useRouter } from "next/navigation";
@@ -14,32 +14,48 @@ import { auth } from "@/lib/firebase";
 export default function LoginPage() {
   const router = useRouter();
 
-  const [loading, setLoading] =
-    useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [error, setError] =
-    useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  async function handleGoogleLogin() {
+  async function handleLogin(
+    event: React.FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+
     setError("");
+
+    const normalizedEmail =
+      email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      setError(
+        "Ingresa tu correo electrónico.",
+      );
+      return;
+    }
+
+    if (!password) {
+      setError(
+        "Ingresa tu contraseña.",
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
       /* ==========================================================
-         GOOGLE AUTHENTICATION
+         FIREBASE AUTHENTICATION
       ========================================================== */
 
-      const provider =
-        new GoogleAuthProvider();
-
-      provider.setCustomParameters({
-        prompt: "select_account",
-      });
-
       const credential =
-        await signInWithPopup(
+        await signInWithEmailAndPassword(
           auth,
-          provider,
+          normalizedEmail,
+          password,
         );
 
       /* ==========================================================
@@ -47,7 +63,9 @@ export default function LoginPage() {
       ========================================================== */
 
       const idToken =
-        await credential.user.getIdToken();
+        await credential.user.getIdToken(
+          true,
+        );
 
       /* ==========================================================
          CREAR SESIÓN SEGURA EN EL SERVIDOR
@@ -68,46 +86,69 @@ export default function LoginPage() {
       );
 
       if (!response.ok) {
-        throw new Error(
-          "No se pudo crear la sesión.",
-        );
+        let message =
+          "No tienes autorización para acceder al panel.";
+
+        try {
+          const data =
+            await response.json();
+
+          if (
+            typeof data?.error ===
+            "string"
+          ) {
+            message = data.error;
+          }
+        } catch {
+          // Mantener mensaje por defecto.
+        }
+
+        // Cerramos la sesión de Firebase
+        // si el servidor rechaza al usuario.
+        await signOut(auth);
+
+        throw new Error(message);
       }
 
       /* ==========================================================
-         IR AL PANEL
+         ACCESO AL PANEL
       ========================================================== */
 
       router.replace("/admin");
       router.refresh();
-
     } catch (error: unknown) {
       const firebaseError =
         error as {
           code?: string;
+          message?: string;
         };
 
-      switch (firebaseError.code) {
-        case "auth/popup-closed-by-user":
+      switch (
+        firebaseError.code
+      ) {
+        case "auth/invalid-credential":
+        case "auth/wrong-password":
+        case "auth/user-not-found":
           setError(
-            "El inicio de sesión fue cancelado.",
+            "El correo o la contraseña no son correctos.",
           );
           break;
 
-        case "auth/popup-blocked":
+        case "auth/invalid-email":
           setError(
-            "El navegador bloqueó la ventana de Google.",
+            "El correo electrónico no es válido.",
           );
           break;
 
-        case "auth/unauthorized-domain":
+        case "auth/user-disabled":
           setError(
-            "Este dominio no está autorizado en Firebase.",
+            "Esta cuenta está deshabilitada.",
           );
           break;
 
-        case "auth/account-exists-with-different-credential":
+        case "auth/too-many-requests":
           setError(
-            "Esta cuenta ya está registrada con otro método de acceso.",
+            "Demasiados intentos. Espera unos minutos e inténtalo nuevamente.",
           );
           break;
 
@@ -119,8 +160,10 @@ export default function LoginPage() {
 
         default:
           setError(
-            "No se pudo iniciar sesión con Google.",
+            firebaseError.message ||
+              "No se pudo iniciar sesión.",
           );
+          break;
       }
     } finally {
       setLoading(false);
@@ -163,55 +206,133 @@ export default function LoginPage() {
           </div>
 
           {/* ======================================================
-              GOOGLE
+              FORMULARIO
           ====================================================== */}
 
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            className="
-              flex
-              min-h-12
-              w-full
-              items-center
-              justify-center
-              gap-3
-              rounded-xl
-              border
-              border-zinc-700
-              bg-white
-              px-4
-              text-sm
-              font-semibold
-              text-zinc-900
-              transition
-              hover:bg-zinc-100
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-            "
+          <form
+            onSubmit={handleLogin}
+            className="space-y-4"
           >
-            <span
+
+            {/* ====================================================
+                CORREO
+            ==================================================== */}
+
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                Correo electrónico
+              </label>
+
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) =>
+                  setEmail(
+                    event.target.value,
+                  )
+                }
+                disabled={loading}
+                placeholder="admin@misticuy.pe"
+                className="
+                  min-h-12
+                  w-full
+                  rounded-xl
+                  border
+                  border-zinc-700
+                  bg-zinc-950
+                  px-4
+                  text-sm
+                  text-white
+                  outline-none
+                  placeholder:text-zinc-600
+                  focus:border-zinc-500
+                  disabled:cursor-not-allowed
+                  disabled:opacity-50
+                "
+              />
+            </div>
+
+            {/* ====================================================
+                CONTRASEÑA
+            ==================================================== */}
+
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                Contraseña
+              </label>
+
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) =>
+                  setPassword(
+                    event.target.value,
+                  )
+                }
+                disabled={loading}
+                placeholder="••••••••"
+                className="
+                  min-h-12
+                  w-full
+                  rounded-xl
+                  border
+                  border-zinc-700
+                  bg-zinc-950
+                  px-4
+                  text-sm
+                  text-white
+                  outline-none
+                  placeholder:text-zinc-600
+                  focus:border-zinc-500
+                  disabled:cursor-not-allowed
+                  disabled:opacity-50
+                "
+              />
+            </div>
+
+            {/* ====================================================
+                BOTÓN
+            ==================================================== */}
+
+            <button
+              type="submit"
+              disabled={loading}
               className="
                 flex
-                h-6
-                w-6
+                min-h-12
+                w-full
                 items-center
                 justify-center
-                text-base
-                font-bold
+                rounded-xl
+                bg-white
+                px-4
+                text-sm
+                font-semibold
+                text-zinc-900
+                transition
+                hover:bg-zinc-100
+                disabled:cursor-not-allowed
+                disabled:opacity-50
               "
-              aria-hidden="true"
             >
-              G
-            </span>
-
-            <span>
               {loading
-                ? "Conectando..."
-                : "Continuar con Google"}
-            </span>
-          </button>
+                ? "Iniciando sesión..."
+                : "Iniciar sesión"}
+            </button>
+
+          </form>
 
           {/* ======================================================
               ERROR
@@ -239,7 +360,7 @@ export default function LoginPage() {
         </div>
 
         {/* ========================================================
-            PIE
+            FOOTER
         ======================================================== */}
 
         <p className="mt-6 text-center text-xs text-zinc-600">
