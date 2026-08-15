@@ -28,10 +28,6 @@ export default function ReproductiveTable({
         typeof publication,
         { type: "REPRODUCTOR" }
       > => {
-        /* ------------------------------------------------------------
-           CATEGORÍA
-        ------------------------------------------------------------ */
-
         if (
           publication.type !==
           "REPRODUCTOR"
@@ -103,15 +99,14 @@ export default function ReproductiveTable({
     )
     .map((publication) => {
       const breed =
-        publication.breed
-          .trim();
+        publication.breed.trim();
 
       const normalizedBreed =
         breed.toLowerCase();
 
       /* ------------------------------------------------------------
          RAZAS RECONOCIDAS
-        ------------------------------------------------------------ */
+      ------------------------------------------------------------ */
 
       const isKnownBreed =
         normalizedBreed === "perú" ||
@@ -122,27 +117,23 @@ export default function ReproductiveTable({
 
       /* ------------------------------------------------------------
          NATIVO
-        ------------------------------------------------------------ */
+      ------------------------------------------------------------ */
 
       const isNative =
-        normalizedBreed ===
-        "nativo";
+        normalizedBreed === "nativo";
 
       /* ------------------------------------------------------------
-         VARIEDAD MOSTRADA EN LA TABLA
+         VARIEDAD MOSTRADA
 
-         Razas:
-           Perú
-           Kuri
-           Andina
-           Inti
+         Perú / Kuri / Andina / Inti
+         → aparece la raza.
 
-         Nativo:
-           Línea
+         Nativo
+         → aparece solamente "Línea".
 
-         El nombre de la línea, por ejemplo Mantaro,
-         NO aparece aquí.
-        ------------------------------------------------------------ */
+         El nombre de la línea no aparece
+         en esta tabla.
+      ------------------------------------------------------------ */
 
       const variety =
         isNative
@@ -197,7 +188,27 @@ export default function ReproductiveTable({
       return null;
     }
 
-    return `https://wa.me/${cleanPhone}`;
+    /*
+     * Perú.
+     *
+     * Si el perfil tiene:
+     * 987654321
+     *
+     * se genera:
+     * 51987654321
+     *
+     * Si ya tiene 51:
+     * 51987654321
+     *
+     * no se duplica.
+     */
+
+    const phoneWithCountryCode =
+      cleanPhone.startsWith("51")
+        ? cleanPhone
+        : `51${cleanPhone}`;
+
+    return `https://wa.me/${phoneWithCountryCode}`;
   };
 
   /* ================================================================
@@ -269,8 +280,6 @@ export default function ReproductiveTable({
           <thead className="bg-[#00BC7D]">
             <tr>
 
-              {/* VARIEDAD */}
-
               <th
                 className="
                   border-r
@@ -285,8 +294,6 @@ export default function ReproductiveTable({
               >
                 Variedad
               </th>
-
-              {/* SEXO */}
 
               <th
                 className="
@@ -303,8 +310,6 @@ export default function ReproductiveTable({
                 Sexo
               </th>
 
-              {/* CANTIDAD */}
-
               <th
                 className="
                   border-r
@@ -319,8 +324,6 @@ export default function ReproductiveTable({
               >
                 Cantidad
               </th>
-
-              {/* PRECIO */}
 
               <th
                 className="
@@ -337,8 +340,6 @@ export default function ReproductiveTable({
                 Precio
               </th>
 
-              {/* UBICACIÓN */}
-
               <th
                 className="
                   border-r
@@ -353,8 +354,6 @@ export default function ReproductiveTable({
               >
                 Ubicación
               </th>
-
-              {/* ESTADO */}
 
               <th
                 className="
@@ -371,8 +370,6 @@ export default function ReproductiveTable({
                 Estado
               </th>
 
-              {/* CONTACTO */}
-
               <th
                 className="
                   border-r
@@ -387,8 +384,6 @@ export default function ReproductiveTable({
               >
                 Contacto
               </th>
-
-              {/* ACTUALIZADO */}
 
               <th
                 className="
@@ -413,14 +408,27 @@ export default function ReproductiveTable({
           <tbody>
             {rows.length > 0 ? (
               rows.map((row) => {
-                const whatsappUrl =
-                  getWhatsappUrl(
-                    row.whatsapp,
-                  );
+
+                /* --------------------------------------------------
+                   ESTADO
+                -------------------------------------------------- */
 
                 const isAvailable =
                   row.status ===
                   "DISPONIBLE";
+
+                /* --------------------------------------------------
+                   WHATSAPP
+
+                   SOLO SE GENERA SI ESTÁ DISPONIBLE.
+                -------------------------------------------------- */
+
+                const whatsappUrl =
+                  isAvailable
+                    ? getWhatsappUrl(
+                        row.whatsapp,
+                      )
+                    : null;
 
                 const isSelected =
                   selection.selectedPublicationId ===
@@ -571,12 +579,14 @@ export default function ReproductiveTable({
                             text-[#EF4444]
                           "
                         >
-                          Vendido
+                          No disponible
                         </span>
                       )}
                     </td>
 
-                    {/* CONTACTO */}
+                    {/* =================================================
+                        WHATSAPP
+                    ================================================= */}
 
                     <td
                       className="
@@ -587,7 +597,8 @@ export default function ReproductiveTable({
                         text-center
                       "
                     >
-                      {whatsappUrl ? (
+                      {isAvailable &&
+                      whatsappUrl ? (
                         <a
                           href={whatsappUrl}
                           target="_blank"
@@ -614,12 +625,22 @@ export default function ReproductiveTable({
                         </a>
                       ) : (
                         <span
+                          aria-disabled="true"
                           className="
+                            inline-flex
+                            cursor-not-allowed
+                            items-center
+                            justify-center
+                            rounded-lg
+                            bg-[#27272A]
+                            px-3
+                            py-2
                             text-xs
+                            font-semibold
                             text-[#71717A]
                           "
                         >
-                          No disponible
+                          WhatsApp
                         </span>
                       )}
                     </td>

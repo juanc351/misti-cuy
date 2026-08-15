@@ -127,14 +127,6 @@ export default function ConsumptionTable({
       observations:
         publication.observations,
 
-      /* ------------------------------------------------------------
-         FECHA
-
-         2026-08-11T03:13:40.000Z
-         ↓
-         2026-08-11
-      ------------------------------------------------------------ */
-
       updatedAt:
         publication.updatedAt
           ? publication.updatedAt.split("T")[0]
@@ -155,7 +147,27 @@ export default function ConsumptionTable({
       return null;
     }
 
-    return `https://wa.me/${cleanPhone}`;
+    /*
+     * Perú.
+     *
+     * Si se guarda:
+     * 987654321
+     *
+     * se genera:
+     * https://wa.me/51987654321
+     *
+     * Si ya contiene 51:
+     * 51987654321
+     *
+     * no se duplica.
+     */
+
+    const phoneWithCountryCode =
+      cleanPhone.startsWith("51")
+        ? cleanPhone
+        : `51${cleanPhone}`;
+
+    return `https://wa.me/${phoneWithCountryCode}`;
   };
 
   /* ================================================================
@@ -186,6 +198,7 @@ export default function ConsumptionTable({
 
   return (
     <section className="bg-[#09090B]">
+
       {/* ============================================================
           ENCABEZADO
       ============================================================ */}
@@ -218,12 +231,14 @@ export default function ConsumptionTable({
             border-collapse
           "
         >
+
           {/* ========================================================
               ENCABEZADO
           ======================================================== */}
 
           <thead className="bg-[#00BC7D]">
             <tr>
+
               {/* PESO */}
 
               <th
@@ -340,6 +355,7 @@ export default function ConsumptionTable({
               >
                 Actualizado
               </th>
+
             </tr>
           </thead>
 
@@ -350,14 +366,30 @@ export default function ConsumptionTable({
           <tbody>
             {rows.length > 0 ? (
               rows.map((row) => {
-                const whatsappUrl =
-                  getWhatsappUrl(
-                    row.whatsapp,
-                  );
+
+                /* --------------------------------------------------
+                   ESTADO
+                -------------------------------------------------- */
 
                 const isAvailable =
                   row.status ===
                   "DISPONIBLE";
+
+                /* --------------------------------------------------
+                   WHATSAPP
+
+                   MUY IMPORTANTE:
+
+                   Solo generamos el enlace si la
+                   publicación está disponible.
+                -------------------------------------------------- */
+
+                const whatsappUrl =
+                  isAvailable
+                    ? getWhatsappUrl(
+                        row.whatsapp,
+                      )
+                    : null;
 
                 const isSelected =
                   selection.selectedPublicationId ===
@@ -386,6 +418,7 @@ export default function ConsumptionTable({
                       }
                     `}
                   >
+
                     {/* PESO */}
 
                     <td
@@ -490,12 +523,14 @@ export default function ConsumptionTable({
                             text-[#EF4444]
                           "
                         >
-                          Vendido
+                          No disponible
                         </span>
                       )}
                     </td>
 
-                    {/* WHATSAPP */}
+                    {/* =================================================
+                        WHATSAPP
+                    ================================================= */}
 
                     <td
                       className="
@@ -506,7 +541,8 @@ export default function ConsumptionTable({
                         text-center
                       "
                     >
-                      {whatsappUrl ? (
+                      {isAvailable &&
+                      whatsappUrl ? (
                         <a
                           href={whatsappUrl}
                           target="_blank"
@@ -533,12 +569,22 @@ export default function ConsumptionTable({
                         </a>
                       ) : (
                         <span
+                          aria-disabled="true"
                           className="
+                            inline-flex
+                            cursor-not-allowed
+                            items-center
+                            justify-center
+                            rounded-lg
+                            bg-[#27272A]
+                            px-3
+                            py-2
                             text-xs
+                            font-semibold
                             text-[#71717A]
                           "
                         >
-                          No disponible
+                          WhatsApp
                         </span>
                       )}
                     </td>
@@ -555,6 +601,7 @@ export default function ConsumptionTable({
                     >
                       {row.updatedAt}
                     </td>
+
                   </tr>
                 );
               })
@@ -577,6 +624,7 @@ export default function ConsumptionTable({
               </tr>
             )}
           </tbody>
+
         </table>
       </div>
     </section>

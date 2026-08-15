@@ -82,7 +82,8 @@ export default function CuyProductGrid({
         ------------------------------------------------------ */
 
         if (
-          filters.selectedStatus !== "ALL" &&
+          filters.selectedStatus !==
+            "ALL" &&
           publication.status !==
             filters.selectedStatus
         ) {
@@ -95,6 +96,9 @@ export default function CuyProductGrid({
 
   /* ==========================================================
      PUBLICACIÓN ACTUAL
+
+     Si el usuario hace click en una fila,
+     se muestra exactamente esa publicación.
   ========================================================== */
 
   const currentPublication =
@@ -105,10 +109,22 @@ export default function CuyProductGrid({
         selectedPublication.id,
     )
       ? selectedPublication
-      : compatiblePublications[0] ?? null;
+      : compatiblePublications[0] ??
+        null;
+
+  /* ==========================================================
+     ESTADO DE DISPONIBILIDAD
+  ========================================================== */
+
+  const isAvailable =
+    currentPublication?.status ===
+    "DISPONIBLE";
 
   /* ==========================================================
      WHATSAPP
+     
+     Solo se habilita cuando la publicación
+     está disponible.
   ========================================================== */
 
   const getWhatsappUrl = (
@@ -121,13 +137,35 @@ export default function CuyProductGrid({
       return null;
     }
 
-    return `https://wa.me/${cleanPhone}`;
+    /*
+     * Perú.
+     *
+     * Si el perfil contiene:
+     * 987654321
+     *
+     * se genera:
+     * https://wa.me/51987654321
+     *
+     * Si ya contiene 51:
+     * 51987654321
+     *
+     * no se duplica.
+     */
+
+    const phoneWithCountryCode =
+      cleanPhone.startsWith("51")
+        ? cleanPhone
+        : `51${cleanPhone}`;
+
+    return `https://wa.me/${phoneWithCountryCode}`;
   };
 
   const whatsappUrl =
-    getWhatsappUrl(
-      profile?.phone ?? "",
-    );
+    isAvailable
+      ? getWhatsappUrl(
+          profile?.phone ?? "",
+        )
+      : null;
 
   /* ==========================================================
      SIN PUBLICACIONES
@@ -159,17 +197,44 @@ export default function CuyProductGrid({
     "REPRODUCTOR"
   ) {
     const title =
-      currentPublication.sex === "MACHO"
+      currentPublication.sex ===
+      "MACHO"
         ? "Macho reproductor"
         : "Hembra reproductora";
 
+    /*
+     * Razas:
+     * Perú
+     * Kuri
+     * Andina
+     * Inti
+     *
+     * Nativo:
+     * Línea - nombre
+     */
+
+    const normalizedBreed =
+      currentPublication.breed
+        .trim()
+        .toLowerCase();
+
+    const isKnownBreed =
+      normalizedBreed === "perú" ||
+      normalizedBreed === "peru" ||
+      normalizedBreed === "kuri" ||
+      normalizedBreed === "andina" ||
+      normalizedBreed === "inti";
+
     const variety =
-      currentPublication.line?.trim()
-        ? `Línea - ${currentPublication.line}`
-        : currentPublication.breed;
+      isKnownBreed
+        ? currentPublication.breed
+        : currentPublication.line?.trim()
+          ? `Línea - ${currentPublication.line}`
+          : "Línea";
 
     return (
       <section className="w-full">
+
         {/* ====================================================
             ENCABEZADO
         ==================================================== */}
@@ -180,19 +245,22 @@ export default function CuyProductGrid({
           </h2>
 
           <p className="mt-1 text-sm text-[#A1A1AA]">
-            Disponibilidad actual según la selección
-            realizada.
+            Información actual de la publicación seleccionada.
           </p>
         </div>
 
         {/* ====================================================
-            PRESENTACIÓN ANTERIOR
+            CARTILLA
         ==================================================== */}
 
         <div className="space-y-3 p-4 md:space-y-4 md:p-6">
           <ProductCard
             title={title}
-            quantity={`${currentPublication.quantity} disponibles`}
+            quantity={
+              isAvailable
+                ? `${currentPublication.quantity} disponibles`
+                : "No disponible"
+            }
             detail1={`Raza / Línea: ${variety || "-"}`}
             detail2={`Precio: S/ ${currentPublication.price}`}
             detail3={`Ubicación: ${
@@ -200,7 +268,12 @@ export default function CuyProductGrid({
               profile?.department?.trim() ||
               "-"
             }`}
-            whatsappUrl={whatsappUrl}
+            status={
+              currentPublication.status
+            }
+            whatsappUrl={
+              whatsappUrl
+            }
           />
         </div>
       </section>
@@ -213,6 +286,7 @@ export default function CuyProductGrid({
 
   return (
     <section className="w-full">
+
       {/* ====================================================
           ENCABEZADO
       ==================================================== */}
@@ -223,19 +297,22 @@ export default function CuyProductGrid({
         </h2>
 
         <p className="mt-1 text-sm text-[#A1A1AA]">
-          Disponibilidad actual según la selección
-          realizada.
+          Información actual de la publicación seleccionada.
         </p>
       </div>
 
       {/* ====================================================
-          PRESENTACIÓN ANTERIOR
+          CARTILLA
       ==================================================== */}
 
       <div className="space-y-3 p-4 md:space-y-4">
         <ProductCard
           title={`${currentPublication.weight} g`}
-          quantity={`${currentPublication.quantity} disponibles`}
+          quantity={
+            isAvailable
+              ? `${currentPublication.quantity} disponibles`
+              : "No disponible"
+          }
           detail1={`Peso: ${currentPublication.weight} g`}
           detail2={`Precio: S/ ${currentPublication.price}`}
           detail3={`Ubicación: ${
@@ -243,7 +320,12 @@ export default function CuyProductGrid({
             profile?.department?.trim() ||
             "-"
           }`}
-          whatsappUrl={whatsappUrl}
+          status={
+            currentPublication.status
+          }
+          whatsappUrl={
+            whatsappUrl
+          }
         />
       </div>
     </section>
@@ -260,6 +342,11 @@ interface ProductCardProps {
   detail1: string;
   detail2: string;
   detail3: string;
+
+  status:
+    | "DISPONIBLE"
+    | "NO_DISPONIBLE";
+
   whatsappUrl: string | null;
 }
 
@@ -269,8 +356,12 @@ function ProductCard({
   detail1,
   detail2,
   detail3,
+  status,
   whatsappUrl,
 }: ProductCardProps) {
+  const isAvailable =
+    status === "DISPONIBLE";
+
   return (
     <article
       className="
@@ -282,6 +373,7 @@ function ProductCard({
         md:p-6
       "
     >
+
       {/* ==================================================
           TÍTULO
       ================================================== */}
@@ -291,16 +383,41 @@ function ProductCard({
       </h3>
 
       {/* ==================================================
-          CANTIDAD
+          ESTADO
       ================================================== */}
 
       <p
-        className="
+        className={`
           mt-2
+          text-xs
+          font-semibold
+          ${
+            isAvailable
+              ? "text-[#5FAF32]"
+              : "text-[#A1A1AA]"
+          }
+        `}
+      >
+        {isAvailable
+          ? "Disponible"
+          : "No disponible"}
+      </p>
+
+      {/* ==================================================
+          CANTIDAD / DISPONIBILIDAD
+      ================================================== */}
+
+      <p
+        className={`
+          mt-1
           text-2xl
           font-bold
-          text-[#5FAF32]
-        "
+          ${
+            isAvailable
+              ? "text-[#5FAF32]"
+              : "text-[#A1A1AA]"
+          }
+        `}
       >
         {quantity}
       </p>
@@ -326,7 +443,8 @@ function ProductCard({
           WHATSAPP
       ================================================== */}
 
-      {whatsappUrl && (
+      {isAvailable &&
+      whatsappUrl ? (
         <a
           href={whatsappUrl}
           target="_blank"
@@ -351,6 +469,27 @@ function ProductCard({
         >
           Consultar por WhatsApp
         </a>
+      ) : (
+        <span
+          aria-disabled="true"
+          className="
+            mt-5
+            flex
+            w-full
+            cursor-not-allowed
+            items-center
+            justify-center
+            rounded-xl
+            bg-[#27272A]
+            px-4
+            py-3
+            text-sm
+            font-semibold
+            text-[#71717A]
+          "
+        >
+          WhatsApp no disponible
+        </span>
       )}
     </article>
   );
